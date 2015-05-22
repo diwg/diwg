@@ -1,0 +1,45 @@
+// -*-C++-*-
+
+// Purpose: CDL file to demonstrate best practices for gridded datasets
+// Part of an ongoing project by NASA's Dataset Interoperability Working Group (DIWG)
+// Comments, questions, suggestions to fxm
+
+// Usage:
+// ncgen             -b -o global_rectangular.nc global_rectangular.cdl # netCDF3
+// ncgen -k netCDF-4 -b -o global_rectangular.nc global_rectangular.cdl # netCDF4
+
+// URL: 
+// git clone http://github.com/diwg/template.git
+// http://github.com/diwg/diwg/global_rectangular.cdl
+
+netcdf global_rectangular {
+ dimensions:
+  longitude = 1388 ;
+  latitude = 540 ;
+  time = UNLIMITED ; // time = 1 for files w/one time slice
+  
+ variables:
+  // Grid coordinates are double precision to retain accuracy during remapping
+  double longitude(longitude) ;
+  double latitude(latitude) ; // Grid Coordinates are double precision 
+  
+  ushort TB(time, latitude, longitude) ;
+ TB:scale_factor = 0.01f ;
+ TB:add_offset = 0.0f ;
+ TB:packing_convention = "netCDF" ;
+ TB:packing_convention_description = "unpacked = scale_factor*packed + add_offset" ;
+ TB:grid_mapping = "crs" ;
+  
+  ubyte TB_num_samples(time, latitude, longitude) ;
+ TB:grid_mapping = "crs" ;
+  char crs ;
+ crs:grid_mapping_name = "lambert_cylindrical_equal_area" ;
+ crs:crs_wkt = "PROJCS[
+	    BASE_GEODGCS[\"WGS 84\",
+	        DATUM[ \"World Geodetic System 1984\",
+		    ELLIPSOID[\"WGS 84\",
+		    6378137,298.257223563,
+		    LENGTHUNIT[\"metre\",\"1.0\"]]]],
+    	    ID[\"EPSG,6933\"]]" ;
+  
+} // end netcdf
