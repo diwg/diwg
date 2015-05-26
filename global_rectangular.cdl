@@ -9,7 +9,7 @@
 // ncgen -k netCDF-4 -b -o global_rectangular.nc global_rectangular.cdl # netCDF4
 
 // URL: 
-// git clone http://github.com/diwg/template.git
+// git clone http://github.com/diwg/diwg.git
 // http://github.com/diwg/diwg/global_rectangular.cdl
 
 netcdf global_rectangular {
