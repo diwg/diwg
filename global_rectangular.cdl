@@ -21,8 +21,10 @@ netcdf global_rectangular {
  variables:
   // Grid coordinates are double precision to retain accuracy during remapping
   double longitude(longitude) ;
+  longitude:standard_name = "longitude";
   longitude:units = "degrees_east";
-  double latitude(latitude) ; // Grid Coordinates are double precision 
+  double latitude(latitude) ;
+  latitude:standard_name = "latitude";
   latitude:units = "degrees_north";  
 
   ushort TB(time, latitude, longitude) ;
