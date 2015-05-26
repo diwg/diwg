@@ -6,8 +6,10 @@ dimensions:
 
 variables:
     short XDim(XDim) ;
+      XDim:units = "degrees_east";
         ...
     short YDim(YDim) ;
+      YDim:units = "degrees_north";  
         ...
     ushort TB(time, YDim, XDim) ;
         ...
