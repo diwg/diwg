@@ -14,8 +14,8 @@
 
 netcdf global_rectangular {
  dimensions:
-  longitude = 1388 ;
-  latitude = 540 ;
+  longitude = 2 ;
+  latitude = 2 ;
   time = UNLIMITED ; // time = 1 for files w/one time slice
   
  variables:
@@ -23,21 +23,29 @@ netcdf global_rectangular {
   double longitude(longitude) ;
   longitude:standard_name = "longitude";
   longitude:units = "degrees_east";
+
   double latitude(latitude) ;
   latitude:standard_name = "latitude";
   latitude:units = "degrees_north";  
 
-  ushort TB(time, latitude, longitude) ;
+  short TB(time, latitude, longitude) ;
+ TB:long_name = "brightness temperature";
+ TB:standard_name = "brightness_temperature";
+ TB:units = "kelvin";
  TB:scale_factor = 0.01f ;
  TB:add_offset = 0.0f ;
  TB:packing_convention = "netCDF" ;
  TB:packing_convention_description = "unpacked = scale_factor*packed + add_offset" ;
  TB:grid_mapping = "crs" ;
   
-  ubyte TB_num_samples(time, latitude, longitude) ;
- TB:grid_mapping = "crs" ;
+  byte TB_num_samples(time, latitude, longitude) ;
+ TB_num_samples:long_name = "brightness temperature number of samples";
+ TB_num_samples:units = "1";
+ TB_num_samples:grid_mapping = "crs" ;
+
   char crs ;
- crs:grid_mapping_name = "lambert_cylindrical_equal_area" ;
+  // CF Grid Mappings: http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/apf.html
+  crs:grid_mapping_name = "lambert_cylindrical_equal_area" ;
  crs:crs_wkt = "PROJCS[
 	    BASE_GEODGCS[\"WGS 84\",
 	        DATUM[ \"World Geodetic System 1984\",
@@ -45,5 +53,10 @@ netcdf global_rectangular {
 		    6378137,298.257223563,
 		    LENGTHUNIT[\"metre\",\"1.0\"]]]],
     	    ID[\"EPSG,6933\"]]" ;
-  
+
+ data:
+  longitude=0.,360.;
+  latitude=-90.,90.;
+  TB=1;
+  TB_num_samples='1';
 } // end netcdf
