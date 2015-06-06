@@ -1,3 +1,17 @@
+// -*-C++-*-
+
+// Purpose: CDL file to demonstrate best practices for swath-like datasets
+// Part of an ongoing project by NASA's Dataset Interoperability Working Group (DIWG)
+// Comments, questions, suggestions to fxm
+
+// Usage:
+// ncgen             -b -o swath_rectangular.nc swath_rectangular.cdl # netCDF3
+// ncgen -k netCDF-4 -b -o swath_rectangular.nc swath_rectangular.cdl # netCDF4
+
+// URL: 
+// git clone http://github.com/diwg/diwg.git
+// http://github.com/diwg/diwg/swath_rectangular.cdl
+
 netcdf swath_rectangular {
 dimensions:
     XDim = 1388 ;
@@ -7,35 +21,26 @@ dimensions:
 variables:
     short XDim(XDim) ;
       XDim:units = "degrees_east";
-        ...
     short YDim(YDim) ;
       YDim:units = "degrees_north";  
-        ...
     ushort TB(time, YDim, XDim) ;
-        ...
 	TB:scale_factor = 0.01f ;
 	TB:add_offset = 0.0f ;
 	TB:packing_convention = "netCDF" ;
-	TB:packing_convention_description = \
+	TB:packing_convention_description = 
 	    "unpacked = scale_factor*packed + add_offset" ;
 	TB:grid_mapping = "crs" ;
-	...
     ubyte TB_num_samples(time, YDim, XDim) ;
-        ...
     	TB:grid_mapping = "crs" ;
-	...
     char crs ;
-        ...
-	crs:grid_mapping_name \
+	crs:grid_mapping_name 
 	    = "lambert_cylindrical_equal_area" ;
-    	...
-	crs:crs_wkt = "PROJCS[...
-	    BASE_GEODGCS["WGS 84",
-	        DATUM[ "World Geodetic System 1984",
-		    ELLIPSOID["WGS 84", \
-		    6378137,298.257223563, \
-		    LENGTHUNIT["metre","1.0"]]]],
-            ...
-    	    ID["EPSG,6933"]]" ;
-    ...	    
+    crs:crs_wkt = "PROJCS[
+	    BASE_GEODGCS[\"WGS 84\",
+	        DATUM[ \"World Geodetic System 1984\",
+		    ELLIPSOID[\"WGS 84\",
+		    6378137,298.257223563,
+		    LENGTHUNIT[\"metre\",\"1.0\"]]]],
+    	    ID[\"EPSG,6933\"]]" ;
 
+}
