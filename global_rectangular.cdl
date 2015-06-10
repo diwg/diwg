@@ -1,6 +1,6 @@
 // -*-C++-*-
 
-// Purpose: CDL file to demonstrate best practices for global gridded datasets
+// Purpose: CDL file to demonstrate best practices for rectangular gridded datasets
 // Part of an ongoing project by NASA's Dataset Interoperability Working Group (DIWG)
 // Comments, questions, suggestions to fxm
 
