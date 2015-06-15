@@ -1,0 +1,44 @@
+// This is a CDL template for storing satellite swath multiband (multichannel)
+// geolocated and calibrated radiance data. These data are known as "Level 1B
+// data". This template illustrates the use of a string-valued auxiliary
+// coordinate variable for band (channel) information. It is applicable to
+// those cases where different bands cannot be distinguished numerically.
+//
+// Only variables and their attributes that support the concept are included
+// in the template.
+//
+// This template is part of an ongoing project by NASA's Dataset
+// Interoperability Working Group (DIWG)
+//
+// Usage:
+//      ncgen -b swath_level1b_template_strcoord.cdl
+//      ncgen -k 4 -b swath_level1b_template_strcoord.cdl
+
+netcdf swath_level1b_template_strcoord {
+dimensions:
+  time = 10 ; // option: time = UNLIMITED
+  scan = 1024 ;
+  band_enum = 5 ;
+  band_strlen = 10 ;
+
+variables:
+  // string-valued auxiliary coordinate variable
+  char band(band_enum, band_strlen) ;
+     band:standard_name = "sensor_band_identifier" ;
+
+  float lat(time, scan) ;
+     lat:standard_name = "latitude" ;
+     lat:units = "degrees_north" ;
+
+  float lon(time, scan) ;
+     lon:standard_name = "longitude" ;
+     lon:units = "degrees_east" ;
+
+  double time(time) ;
+     time:standard_name = "time" ;
+     time:units = "<units> since <datetime string>" ;
+     time:calendar = "gregorian" ;
+
+  float swath_band_data(time, scan, band_enum) ;
+     swath_band_data:coordinates = "lon lat band" ;
+}
