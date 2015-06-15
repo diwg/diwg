@@ -1,0 +1,42 @@
+// This is a CDL template for storing satellite swath multiband (multichannel)
+// geolocated and calibrated radiance data. These data are known as "Level 1B
+// data".
+//
+// Only variables and their attributes that support the concept are included
+// in the template.
+//
+// This template is part of an ongoing project by NASA's Dataset
+// Interoperability Working Group (DIWG)
+//
+// Usage:
+//      ncgen -b swath_level1b_template_numcoord.cdl
+//      ncgen -k 4 -b swath_level1b_template_numcoord.cdl
+
+netcdf swath_level1b_template_numcoord {
+dimensions:
+  time = 10 ; // option: time = UNLIMITED
+  scan = 512 ;
+  band = 5 ;
+
+variables:
+  // spectral coordinate variable
+  float band(band) ;
+     band:standard_name = "sensor_band_central_radiation_wavelength" ;
+     band:units = "um" ;
+
+  float lat(time, scan) ;
+     lat:standard_name = "latitude" ;
+     lat:units = "degrees_north" ;
+
+  float lon(time, scan) ;
+     lon:standard_name = "longitude" ;
+     lon:units = "degrees_east" ;
+
+  double time(time) ;
+     time:standard_name = "time" ;
+     time:units = "<units> since <datetime string>" ;
+     time:calendar = "gregorian" ;
+
+  float swath_band_data(time, scan, band) ;
+     swath_band_data:coordinates = "lon lat" ;
+}
