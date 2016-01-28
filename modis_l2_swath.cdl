@@ -1,0 +1,79 @@
+// -*-C++-*-
+
+// Purpose: CDL file to demonstrate best practices for curvilinear datasets, aka, Swaths
+// Part of an ongoing project by NASA's Dataset Interoperability Working Group (DIWG)
+// Comments, questions, suggestions to fxm
+
+// Usage:
+// ncgen             -b -o modis_l2_swath.nc modis_l2_swath.cdl # netCDF3
+// ncgen -k netCDF-4 -b -o modis_l2_swath.nc modis_l2_swath.cdl # netCDF4
+
+// URL: 
+// git clone http://github.com/diwg/diwg.git
+// http://github.com/diwg/diwg/modis_l2_swath.cdl
+
+netcdf modis_l2_swath {
+
+// Template source: MOD04_L2.A2010091.0950.051.2010104212718.hdf
+  dimensions:
+    Across_Swath = 3 ;
+    Along_Swath = 2 ;
+    Band = 2 ;
+
+  variables:
+    double Band(Band) ;
+      Band:long_name = "Wavelength" ;
+      Band:units = "micron" ;
+
+    double Latitude(Along_Swath,Across_Swath) ;
+      Latitude:long_name = "Geodetic Latitude" ;
+      Latitude:units = "Degrees_north" ;
+      Latitude:Along_Swath_Sampling = 5, 2025, 10 ;
+      Latitude:Across_Swath_Sampling = 5, 1345, 10 ;
+      Latitude:Geolocation_Pointer = "Geolocation data not applicable" ;
+
+    double Longitude(Along_Swath,Across_Swath) ;
+      Longitude:long_name = "Geodetic Longitude" ;
+      Longitude:units = "Degrees_east" ;
+      Longitude:Along_Swath_Sampling = 5, 2025, 10 ;
+      Longitude:Across_Swath_Sampling = 5, 1345, 10 ;
+      Longitude:Geolocation_Pointer = "Geolocation data not applicable" ;
+
+    short AOD550(Along_Swath,Across_Swath) ;
+      AOD550:valid_range = 0s, 5000s ;
+      AOD550:_FillValue = -9999s ;
+      AOD550:long_name = "AOT at 0.55 micron" ;
+      AOD550:units = "None" ;
+      AOD550:scale_factor = 0.001f ;
+      AOD550:add_offset = 0.0f ;
+      AOD550:Along_Swath_Sampling = 5, 2025, 10 ;
+      AOD550:Across_Swath_Sampling = 5, 1345, 10 ;
+      AOD550:Geolocation_Pointer = "Internal geolocation arrays" ;
+
+    short AOD_spectral(Band,Along_Swath,Across_Swath) ;
+      AOD_spectral:valid_range = -100s, 5000s ;
+      AOD_spectral:_FillValue = -9999s ;
+      AOD_spectral:long_name = "AOT every band" ;
+      AOD_spectral:units = "None" ;
+      AOD_spectral:scale_factor = 0.001f ;
+      AOD_spectral:add_offset = 0.0f ;
+
+    short Solar_Zenith(Along_Swath,Across_Swath) ;
+      Solar_Zenith:valid_range = 0s, 18000s ;
+      Solar_Zenith:_FillValue = -9999s ;
+      Solar_Zenith:long_name = "Solar Zenith Angle, Cell to Sun" ;
+      Solar_Zenith:units = "Degrees" ;
+      Solar_Zenith:scale_factor = 0.001f ;
+      Solar_Zenith:add_offset = 0.0f ;
+      Solar_Zenith:Along_Swath_Sampling = 5, 2025, 10 ;
+      Solar_Zenith:Across_Swath_Sampling = 5, 1345, 10 ;
+      Solar_Zenith:Geolocation_Pointer = "Internal geolocation arrays" ;
+
+      data:
+	Band=500,550;
+	Latitude=-45,-44,-43,45,46,47;
+	Longitude=-120,-119,0,1,120,121;
+	AOD550=1,2,3,4,5,6;
+	Solar_Zenith=1,2,3,4,5,6;
+	AOD_spectral=1,2,3,4,5,6,7,8,9,10,11,12;
+} // group /
