@@ -16,8 +16,8 @@ netcdf modis_l2_swath {
 
 // Template source: MOD04_L2.A2010091.0950.051.2010104212718.hdf
   dimensions:
-    Across_Swath = 3 ;
-    Along_Swath = 2 ;
+    Xtrack = 3 ;
+    Track = 2 ;
     Band = 2 ;
 
   variables:
@@ -25,32 +25,32 @@ netcdf modis_l2_swath {
       Band:long_name = "Wavelength" ;
       Band:units = "micron" ;
 
-    double Latitude(Along_Swath,Across_Swath) ;
+    double Latitude(Track,Xtrack) ;
       Latitude:long_name = "Geodetic Latitude" ;
       Latitude:units = "Degrees_north" ;
-      Latitude:Along_Swath_Sampling = 5, 2025, 10 ;
-      Latitude:Across_Swath_Sampling = 5, 1345, 10 ;
+      Latitude:Track_Sampling = 5, 2025, 10 ;
+      Latitude:Xtrack_Sampling = 5, 1345, 10 ;
       Latitude:Geolocation_Pointer = "Geolocation data not applicable" ;
 
-    double Longitude(Along_Swath,Across_Swath) ;
+    double Longitude(Track,Xtrack) ;
       Longitude:long_name = "Geodetic Longitude" ;
       Longitude:units = "Degrees_east" ;
-      Longitude:Along_Swath_Sampling = 5, 2025, 10 ;
-      Longitude:Across_Swath_Sampling = 5, 1345, 10 ;
+      Longitude:Track_Sampling = 5, 2025, 10 ;
+      Longitude:Xtrack_Sampling = 5, 1345, 10 ;
       Longitude:Geolocation_Pointer = "Geolocation data not applicable" ;
 
-    short AOD550(Along_Swath,Across_Swath) ;
+    short AOD550(Track,Xtrack) ;
       AOD550:valid_range = 0s, 5000s ;
       AOD550:_FillValue = -9999s ;
       AOD550:long_name = "AOT at 0.55 micron" ;
       AOD550:units = "None" ;
       AOD550:scale_factor = 0.001f ;
       AOD550:add_offset = 0.0f ;
-      AOD550:Along_Swath_Sampling = 5, 2025, 10 ;
-      AOD550:Across_Swath_Sampling = 5, 1345, 10 ;
+      AOD550:Track_Sampling = 5, 2025, 10 ;
+      AOD550:Xtrack_Sampling = 5, 1345, 10 ;
       AOD550:Geolocation_Pointer = "Internal geolocation arrays" ;
 
-    short AOD_spectral(Band,Along_Swath,Across_Swath) ;
+    short AOD_spectral(Band,Track,Xtrack) ;
       AOD_spectral:valid_range = -100s, 5000s ;
       AOD_spectral:_FillValue = -9999s ;
       AOD_spectral:long_name = "AOT every band" ;
@@ -58,22 +58,10 @@ netcdf modis_l2_swath {
       AOD_spectral:scale_factor = 0.001f ;
       AOD_spectral:add_offset = 0.0f ;
 
-    short Solar_Zenith(Along_Swath,Across_Swath) ;
-      Solar_Zenith:valid_range = 0s, 18000s ;
-      Solar_Zenith:_FillValue = -9999s ;
-      Solar_Zenith:long_name = "Solar Zenith Angle, Cell to Sun" ;
-      Solar_Zenith:units = "Degrees" ;
-      Solar_Zenith:scale_factor = 0.001f ;
-      Solar_Zenith:add_offset = 0.0f ;
-      Solar_Zenith:Along_Swath_Sampling = 5, 2025, 10 ;
-      Solar_Zenith:Across_Swath_Sampling = 5, 1345, 10 ;
-      Solar_Zenith:Geolocation_Pointer = "Internal geolocation arrays" ;
-
       data:
 	Band=500,550;
 	Latitude=-45,-44,-43,45,46,47;
 	Longitude=-120,-119,0,1,120,121;
 	AOD550=1,2,3,4,5,6;
-	Solar_Zenith=1,2,3,4,5,6;
 	AOD_spectral=1,2,3,4,5,6,7,8,9,10,11,12;
 } // group /
