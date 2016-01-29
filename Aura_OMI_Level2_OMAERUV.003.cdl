@@ -1,0 +1,357 @@
+// Purpose: CDL equivalent of the Level 2 Aura OMI OMAERUV product files in HDF5-based 
+// HDF-EOS format archived in NASA GES DISC. The file shows how a Level 2 swath file is 
+// usually encoded in the HDF-EOS convention and how they can be converted to a netCDF  
+// structure with CF convnetion. 
+
+// In this example, the original group structure is flattened. Variables are re-ordered into 
+// CF's coordinate and data variables. But minimal changes are made to the attribute names, so 
+// that readers can get an understanding of what information a L2 data product contains, 
+// particularly the coordinates, attributes, and metadata. 
+// A simplified, CF-compliant example will later be derived from this file.
+
+// This file can be converted to a nc4 file, but cannot be converted to a nc3 data file, 
+// using ncgen because the ubyte and ushort variables are not supported by netCDF3:
+// ncgen -k netCDF-4 -b Aura_OMI_Level2_OMAERUV.003.cdl
+
+// Contact: Wenli Yang, GES DISC, wenli.yang@nasa.gov
+
+netcdf {
+
+ // Template source: 
+ // ftp://aurapar2u.ecs.nasa.gov/data/s4pa/Aura_OMI_Level2/OMAERUV.003/2015/001/OMI-Aura_L2-OMAERUV_2015m0101t0130-o55655_v003-2015m0107t202422.he5
+
+ // File level (global) attributes. 
+ // All file level are originally in /HDFEOS/ADDITIONAL/FILE_ATTRIBUTES/ group, except for 
+ // the "HDFEOSVersion" attribute which is in the "/HDFEOS INFORMATION/" group. In addition,
+ // the "/HDFEOS INFORMATION/" group also contains three string variable each being metadata for the
+ // file. They are the ArchiveMetadata, the CoreMetadata, and the StructMetadata, among which the
+ // StructMetadata tells the variables dimensionality and dimension names.
+ 
+ :HDFEOSVersion = "HDFEOS_5.1.11" ;
+ :AuthorAffiliation = "NASA-GSFC" ;
+ :AuthorName = "Omar Torres" ; 
+ :GranuleDay = 1 ;
+ :GranuleMonth = 1 ;
+ :GranuleYear = 2015 ;
+ :InputVersions = "OMI-Aura_L1-OML1BRVG_2015m0101t0130-o55655_v003-2015m0101t072806.he4" ;
+ :InstrumentName = "OMI" ;
+ :OrbitData = "PREDICTED " ;
+ :PGEVersion = "1.4.2" ;
+ :ProcessLevel = "L2" ;
+ :ProcessingCenter = "OMI SIPS" ;
+ :ProcessingHost = "Linux omin1035 2.6.18-348.6.1.el5PAE i686" ;
+ :TAI93At0zOfGranule = 694224008. ;
+	 
+ // Swath attributes, originally in the "/HDFEOS/SWATHS/Aerosol NearUV Swath" group.
+ // Because there is only one swath in this product, these attributes can also be considered at global level.
+ // Some of the attributes can be used to create the coordinate variables such as the altitude values.
+ :EarthSundistance = 1.471011e+11f ;
+ :NumTimes = 1644 ;
+ :NumTimesSmallPixel = 0 ;
+ :Altitude = 0.f, 1.5f, 3.f, 6.f, 10.f ;
+ :SwathName = "OMI Aerosol Optical Depth and Single Scattering Albedo" ;
+ :VerticalCoordinate = "Altitude" ;
+	 
+ // Dimensions
+ // Note: in HDF-EOS, the dimension names are stored in the structure metadata. If one uses ncdump to
+ // dump a HDF-EOS file, the dimension names in its structure will not be recognized by ncdump and
+ // the names will be shown as phony_dim_0, phony_dim_1, etc.
+
+ dimensions:
+   nTimes = 1644 ; // number of time steps in a swath, the same as number of along track data points, "Track".
+   nXtrack = 60 ;
+   nLayers = 5 ; // number of pressure layers. In CF, it should be named "pressure"
+   nWavel = 3 ;  // number of wavelengths. A more common name for this is "Band"
+
+
+ variables:
+
+ // Coordinate variables. 
+ // They are originally included in the "/HDFEOS/SWATHS/Aerosol NearUV Swath/Geolocation Fields/" group.
+ // Notice that 1) two time values are provided in this product, one UTC time and the other seconds in  
+ // the day; 2) the wavelength coordinate variable is not placed in the "geolocation fields" but in the 
+ // "data fields" because they are not "geo"; 3) the values for the "nLayer" coordinate is not included
+ // in this product. It should be provided to compliant with CF.
+   float Latitude(nTimes, nXtrack) ;
+     Latitude:_FillValue = -1.267651e+30f ;
+     Latitude:MissingValue = -1.267651e+30f ;
+     Latitude:Offset = 0. ;
+     Latitude:ScaleFactor = 1. ;
+     Latitude:Units = "deg" ;
+     Latitude:Title = "Geodetic Latitude (deg)" ;
+     Latitude:UniqueFieldDefinition = "Aura-Shared" ;
+		  
+   float Longitude(nTimes, nXtrack) ;
+     Longitude:_FillValue = -1.267651e+30f ;
+     Longitude:MissingValue = -1.267651e+30f ;
+     Longitude:Offset = 0. ;
+     Longitude:ScaleFactor = 1. ;
+     Longitude:Units = "deg" ;
+     Longitude:Title = "Geodetic Longitude (deg)" ;
+     Longitude:UniqueFieldDefinition = "Aura-Shared" ;
+  
+   float SecondsInDay(nTimes) ;
+     SecondsInDay:Units = "s" ;
+     SecondsInDay:_FillValue = -1.267651e+30f ;
+     SecondsInDay:MissingValue = -1.267651e+30f ;
+     SecondsInDay:Offset = 0. ;
+     SecondsInDay:ScaleFactor = 1. ;
+     SecondsInDay:Title = "Seconds of Day at Start of Scan" ;
+     SecondsInDay:UniqueFieldDefinition = "Aura-Shared" ;
+		  
+   double Time(nTimes) ;
+     Time:_FillValue = -1.26765060022823e+30 ;
+     Time:MissingValue = -1.26765060022823e+30 ;
+     Time:Offset = 0. ;
+     Time:ScaleFactor = 1. ;
+     Time:Units = "s" ;
+     Time:Title = "Time at Start of Scan (s, TAI93)" ;
+     Time:UniqueFieldDefinition = "Aura-Shared" ;
+
+  // the wavelength variable is placed in the "Data fields"		
+   float Wavelength(nWavel) ;
+     Wavelength:Units = "nm" ;
+     Wavelength:_FillValue = -1.267651e+30f ;
+     Wavelength:MissingValue = -1.267651e+30f ;
+     Wavelength:Offset = 0. ;
+     Wavelength:ScaleFactor = 1. ;
+     Wavelength:Title = "Wavelength" ;
+     Wavelength:UniqueFieldDefinition = "OMI-Specific" ;
+  
+   float TerrainPressure(nTimes, nXtrack) ;
+     TerrainPressure:_FillValue = -1.267651e+30f ;
+     TerrainPressure:MissingValue = -1.267651e+30f ;
+     TerrainPressure:Offset = 0. ;
+     TerrainPressure:ScaleFactor = 1. ;
+     TerrainPressure:Units = "mbar" ;
+     TerrainPressure:Title = "Terrain Pressure (mbar)" ;
+     TerrainPressure:UniqueFieldDefinition = "Aura-Shared" ;
+ 
+  // An additional coordinate variable for height, float height(nLayers), should be 
+  // included to compliant with CF. The height values are presented in the swath 
+  // attribute as shown above and can be readily used for a height coordinate 
+  // variable, as the following:		
+   float height(nLayers);
+     height:units = "km" ;
+     height:long_name = "vertical distance above the surface" ;
+     height:standard_name = "height" ;
+     height:positive = "up";
+     height:axis = "Z";
+
+ // Data variables.
+ // They are originally included in the "/HDFEOS/SWATHS/Aerosol NearUV Swath/Data Fields/" group.
+   float AIRSL3COvalue(nTimes, nXtrack) ;
+     AIRSL3COvalue:_FillValue = -9999.f ;
+     AIRSL3COvalue:MissingValue = -9999.f ;
+     AIRSL3COvalue:Offset = 0. ;
+     AIRSL3COvalue:ScaleFactor = 1. ;
+     AIRSL3COvalue:Units = "NoUnits" ;
+     AIRSL3COvalue:Title = "AIRS CO L3 data" ;
+     AIRSL3COvalue:UniqueFieldDefinition = "OMI-Specific" ;
+
+   float AerosolAbsOpticalDepthVsHeight(nTimes, nXtrack, nLayers, nWavel) ;
+     AerosolAbsOpticalDepthVsHeight:_FillValue = -1.267651e+30f ;
+     AerosolAbsOpticalDepthVsHeight:MissingValue = -1.267651e+30f ;
+     AerosolAbsOpticalDepthVsHeight:Offset = 0. ;
+     AerosolAbsOpticalDepthVsHeight:ScaleFactor = 1. ;
+     AerosolAbsOpticalDepthVsHeight:Units = "NoUnits" ;
+     AerosolAbsOpticalDepthVsHeight:Title = "Aerosol Absorption Optical Depth (tau_abs) at 5 levels" ;		  
+     AerosolAbsOpticalDepthVsHeight:UniqueFieldDefinition = "OMI-Specific" ;
+
+   float AerosolOpticalDepthVsHeight(nTimes, nXtrack, nLayers, nWavel) ;
+     AerosolOpticalDepthVsHeight:_FillValue = -1.267651e+30f ;
+     AerosolOpticalDepthVsHeight:MissingValue = -1.267651e+30f ;
+     AerosolOpticalDepthVsHeight:Offset = 0. ;
+     AerosolOpticalDepthVsHeight:ScaleFactor = 1. ;
+     AerosolOpticalDepthVsHeight:Units = "NoUnits" ;
+     AerosolOpticalDepthVsHeight:Title = "Aerosol Optical Depth (tau) at 5 levels" ;
+     AerosolOpticalDepthVsHeight:UniqueFieldDefinition = "OMI-Specific" ;
+ 
+   float AerosolSingleScattAlbVsHeight(nTimes, nXtrack, nLayers, nWavel) ;
+     AerosolSingleScattAlbVsHeight:_FillValue = -1.267651e+30f ;
+     AerosolSingleScattAlbVsHeight:MissingValue = -1.267651e+30f ;
+     AerosolSingleScattAlbVsHeight:Offset = 0. ;
+     AerosolSingleScattAlbVsHeight:ScaleFactor = 1. ;
+     AerosolSingleScattAlbVsHeight:Units = "NoUnits" ;
+     AerosolSingleScattAlbVsHeight:Title = "Aerosol Single Scattering Albedo (omega0) at 5 levels" ;
+     AerosolSingleScattAlbVsHeight:UniqueFieldDefinition = "OMI-Specific" ;
+ 
+   ubyte AerosolType(nTimes, nXtrack) ;
+     AerosolType:_FillValue = 255UB ;
+     AerosolType:MissingValue = 255UB ;
+     AerosolType:Offset = 0. ;
+     AerosolType:ScaleFactor = 1. ;
+     AerosolType:Units = "NoUnits" ;
+     AerosolType:Title = "Aerosol Type" ;
+     AerosolType:UniqueFieldDefinition = "OMI-Specific" ;
+ 
+   ushort AlgorithmFlagsVsHeight(nTimes, nXtrack, nLayers) ;
+     AlgorithmFlagsVsHeight:_FillValue = 65535US ;
+     AlgorithmFlagsVsHeight:MissingValue = 65535US ;
+     AlgorithmFlagsVsHeight:Offset = 0. ;
+     AlgorithmFlagsVsHeight:ScaleFactor = 1. ;
+     AlgorithmFlagsVsHeight:Units = "NoUnits" ;
+     AlgorithmFlagsVsHeight:Title = "Algorithm Flags Vs Height" ;
+     AlgorithmFlagsVsHeight:UniqueFieldDefinition = "OMI-Specific" ;
+		  
+   float FinalAerosolAbsOpticalDepth(nTimes, nXtrack, nWavel) ;
+     FinalAerosolAbsOpticalDepth:_FillValue = -1.267651e+30f ;
+     FinalAerosolAbsOpticalDepth:MissingValue = -1.267651e+30f ;
+     FinalAerosolAbsOpticalDepth:Offset = 0. ;
+     FinalAerosolAbsOpticalDepth:ScaleFactor = 1. ;
+     FinalAerosolAbsOpticalDepth:Units = "NoUnits" ;
+     FinalAerosolAbsOpticalDepth:Title = "Best Aerosol Absorption Optical Depth (tau_abs)" ;
+     FinalAerosolAbsOpticalDepth:UniqueFieldDefinition = "OMI-Specific" ;
+  
+   float FinalAerosolLayerHeight(nTimes, nXtrack) ;
+     FinalAerosolLayerHeight:_FillValue = -1.267651e+30f ;
+     FinalAerosolLayerHeight:MissingValue = -1.267651e+30f ;
+     FinalAerosolLayerHeight:Offset = 0. ;
+     FinalAerosolLayerHeight:ScaleFactor = 1. ;
+     FinalAerosolLayerHeight:Units = "km" ;
+     FinalAerosolLayerHeight:Title = "Final Aerosol Layer Height (km)" ;
+     FinalAerosolLayerHeight:UniqueFieldDefinition = "OMI-Specific" ;
+  
+   float FinalAerosolOpticalDepth(nTimes, nXtrack, nWavel) ;
+     FinalAerosolOpticalDepth:_FillValue = -1.267651e+30f ;
+     FinalAerosolOpticalDepth:MissingValue = -1.267651e+30f ;
+     FinalAerosolOpticalDepth:Offset = 0. ;
+     FinalAerosolOpticalDepth:ScaleFactor = 1. ;
+     FinalAerosolOpticalDepth:Units = "NoUnits" ;
+     FinalAerosolOpticalDepth:Title = "Best Aerosol Optical Depth (tau)" ;
+     FinalAerosolOpticalDepth:UniqueFieldDefinition = "OMI-Specific" ;
+
+   float FinalAerosolSingleScattAlb(nTimes, nXtrack, nWavel) ;
+     FinalAerosolSingleScattAlb:_FillValue = -1.267651e+30f ;
+     FinalAerosolSingleScattAlb:MissingValue = -1.267651e+30f ;
+     FinalAerosolSingleScattAlb:Offset = 0. ;
+     FinalAerosolSingleScattAlb:ScaleFactor = 1. ;
+     FinalAerosolSingleScattAlb:Units = "NoUnits" ;
+     FinalAerosolSingleScattAlb:Title = "Best Aerosol Single Scattering Albedo (omega0)" ;
+     FinalAerosolSingleScattAlb:UniqueFieldDefinition = "OMI-Specific" ;
+
+   ushort FinalAlgorithmFlags(nTimes, nXtrack) ;
+     FinalAlgorithmFlags:_FillValue = 65535US ;
+     FinalAlgorithmFlags:MissingValue = 65535US ;
+     FinalAlgorithmFlags:Offset = 0. ;
+     FinalAlgorithmFlags:ScaleFactor = 1. ;
+     FinalAlgorithmFlags:Units = "NoUnits" ;
+     FinalAlgorithmFlags:Title = "Final Algorithm Flags" ;
+     FinalAlgorithmFlags:UniqueFieldDefinition = "OMI-Specific" ;
+
+   float ImaRefractiveIndex(nTimes, nXtrack, nLayers, nWavel) ;
+     ImaRefractiveIndex:_FillValue = -1.267651e+30f ;
+     ImaRefractiveIndex:MissingValue = -1.267651e+30f ;
+     ImaRefractiveIndex:Offset = 0. ;
+     ImaRefractiveIndex:ScaleFactor = 1. ;
+     ImaRefractiveIndex:Units = "NoUnits" ;
+     ImaRefractiveIndex:Title = "Imaginary refractive Index" ;
+     ImaRefractiveIndex:UniqueFieldDefinition = "OMI-Specific" ;
+ 
+   ushort MeasurementQualityFlags(nTimes) ;
+     MeasurementQualityFlags:_FillValue = 65535US ;
+     MeasurementQualityFlags:MissingValue = 65535US ;
+     MeasurementQualityFlags:Offset = 0. ;
+     MeasurementQualityFlags:ScaleFactor = 1. ;
+     MeasurementQualityFlags:Units = "NoUnits" ;
+     MeasurementQualityFlags:Title = "Measurement Quality Flags" ;
+     MeasurementQualityFlags:UniqueFieldDefinition = "OMI-Specific" ;
+
+   float NormRadiance(nTimes, nXtrack, nWavel) ;
+     NormRadiance:_FillValue = -1.267651e+30f ;
+     NormRadiance:MissingValue = -1.267651e+30f ;
+     NormRadiance:Offset = 0. ;
+     NormRadiance:ScaleFactor = 1. ;
+     NormRadiance:Units = "NoUnits" ;
+     NormRadiance:Title = "Normalized Radiance" ;
+     NormRadiance:UniqueFieldDefinition = "OMI-Specific" ;
+
+   ushort PixelQualityFlags(nTimes, nXtrack, nWavel) ;
+     PixelQualityFlags:_FillValue = 65535US ;
+     PixelQualityFlags:MissingValue = 65535US ;
+     PixelQualityFlags:Offset = 0. ;
+     PixelQualityFlags:ScaleFactor = 1. ;
+     PixelQualityFlags:Units = "NoUnits" ;
+     PixelQualityFlags:Title = "Pixel Quality Flags" ;
+     PixelQualityFlags:UniqueFieldDefinition = "OMI-Specific" ;
+		  
+   float Reflectivity(nTimes, nXtrack, nWavel) ;
+     Reflectivity:_FillValue = -1.267651e+30f ;
+     Reflectivity:MissingValue = -1.267651e+30f ;
+     Reflectivity:Offset = 0. ;
+     Reflectivity:ScaleFactor = 1. ;
+     Reflectivity:Units = "NoUnits" ;
+     Reflectivity:Title = "Lambert Equivalent Reflectivity" ;
+     Reflectivity:UniqueFieldDefinition = "OMI-Specific" ;
+
+   float SurfaceAlbedo(nTimes, nXtrack, nWavel) ;
+     SurfaceAlbedo:_FillValue = -1.267651e+30f ;
+     SurfaceAlbedo:MissingValue = -1.267651e+30f ;
+     SurfaceAlbedo:Offset = 0. ;
+     SurfaceAlbedo:ScaleFactor = 1. ;
+     SurfaceAlbedo:Units = "NoUnits" ;
+     SurfaceAlbedo:Title = "Surface Albedo" ;
+     SurfaceAlbedo:UniqueFieldDefinition = "OMI-Specific" ;
+ 
+   float UVAerosolIndex(nTimes, nXtrack) ;
+     UVAerosolIndex:_FillValue = -1.267651e+30f ;
+     UVAerosolIndex:MissingValue = -1.267651e+30f ;
+     UVAerosolIndex:Offset = 0. ;
+     UVAerosolIndex:ScaleFactor = 1. ;
+     UVAerosolIndex:Units = "NoUnits" ;
+     UVAerosolIndex:Title = "UV Aerosol Index" ;
+     UVAerosolIndex:UniqueFieldDefinition = "OMI-Specific" ;
+
+  // Additional variables which are originally included in the swath's geolocation 
+  // fields but should be considered data variables in CF. Notice that in HDF-EOS,
+  // solar and viewing geometry variables are traditionally placed in geolocation
+  // fields (e.g., in MODIS L1B). 
+   float RelativeAzimuthAngle(nTimes, nXtrack) ;
+     RelativeAzimuthAngle:_FillValue = -1.267651e+30f ;
+     RelativeAzimuthAngle:MissingValue = -1.267651e+30f ;
+     RelativeAzimuthAngle:Offset = 0. ;
+     RelativeAzimuthAngle:ScaleFactor = 1. ;
+     RelativeAzimuthAngle:Units = "deg(EastofNorth)" ;
+     RelativeAzimuthAngle:Title = "Relative (sun + 180 - view) Azimuth Angle (deg)" ;
+     RelativeAzimuthAngle:UniqueFieldDefinition = "OMI-Specific" ;
+
+   float SolarZenithAngle(nTimes, nXtrack) ;
+     SolarZenithAngle:_FillValue = -1.267651e+30f ;
+     SolarZenithAngle:MissingValue = -1.267651e+30f ;
+     SolarZenithAngle:Offset = 0. ;
+     SolarZenithAngle:ScaleFactor = 1. ;
+     SolarZenithAngle:Units = "deg" ;
+     SolarZenithAngle:Title = "Solar Zenith Angle (deg)" ;
+     SolarZenithAngle:UniqueFieldDefinition = "Aura-Shared" ;
+
+   float ViewingZenithAngle(nTimes, nXtrack) ;
+     ViewingZenithAngle:_FillValue = -1.267651e+30f ;
+     ViewingZenithAngle:MissingValue = -1.267651e+30f ;
+     ViewingZenithAngle:Offset = 0. ;
+     ViewingZenithAngle:ScaleFactor = 1. ;
+     ViewingZenithAngle:Units = "deg" ;
+     ViewingZenithAngle:Title = "Viewing Zenith Angle (deg)" ;
+     ViewingZenithAngle:UniqueFieldDefinition = "OMI-Specific" ;
+
+   ushort GroundPixelQualityFlags(nTimes, nXtrack) ;
+     GroundPixelQualityFlags:_FillValue = 65535US ;
+     GroundPixelQualityFlags:MissingValue = 65535US ;
+     GroundPixelQualityFlags:Offset = 0. ;
+     GroundPixelQualityFlags:ScaleFactor = 1. ;
+     GroundPixelQualityFlags:Units = "NoUnits" ;
+     GroundPixelQualityFlags:Title = "Ground Pixel Quality Flags" ;
+     GroundPixelQualityFlags:UniqueFieldDefinition = "OMI-Specific" ;
+
+   ubyte XTrackQualityFlags(nTimes, nXtrack) ;
+     XTrackQualityFlags:_FillValue = 255UB ;
+     XTrackQualityFlags:MissingValue = 255UB ;
+     XTrackQualityFlags:Offset = 0. ;
+     XTrackQualityFlags:ScaleFactor = 1. ;
+     XTrackQualityFlags:Units = "NoUnits" ;
+     XTrackQualityFlags:Title = "XTrack Quality Flags" ;
+     XTrackQualityFlags:UniqueFieldDefinition = "OMI-Specific" ;
+
+  // Data are not included in this example
+  data:
+
+}
