@@ -1,0 +1,190 @@
+// Purpose: CDL equivalent of the Level 2 OMI OMAERUV product files in HDF5-based HDF-EOS 
+// format archived in NASA GES DISC. The files shows how a Level 2 swath data file is 
+// usually encoded in the HDF-EOS convention and how they can be converted to a netCDF  
+// structure with CF convention. 
+
+// A short version of the "Aura_OMI_Level2_OMAERUV.003.cdl" by removing variables with
+// similar dimensionalities, but the viewing/solar geometry variables and one quality 
+// screning variable are still included to show the variety of information a L1/L2 swath
+// files commonly include. File and swath level attrubutes are removed as they mostly 
+// likely will be replaced with CF-compliant global attributes. 
+// Some additional changes are made to make the file more CF-compliant:
+// 1) added a new attribute, "coordinates", for data variables to identify 
+//    associated coordinate variables.
+// 2) removed fill/missing value and scale/offset attributes from coordinate variables.
+// 3) changed attributes names, such as "ScaleFactor" to "scale_factor", and 
+//      "title" to "long_name".
+// 4) changed unit values, such as "deg" to "degree_east" or "degree_north".
+// 5) removed the unit attribute when its value is "NoUnits".
+// 6) removed most file/swath level attributes, and changed/added three 
+//    CF golbal attributes.
+// 7) removed from the integer variables the scale/offset when their values are 
+//    equal to 1.0 and 0.0, respectively. They will otherwise cause compliancy error.
+//    Actually they are also not needed for variables of the other data types.
+
+// This file can be converted to a nc4 file, but not a nc3 data file using ncgen because 
+// the ubyte and ushort variables are not supported by netCDF3: 
+// ncgen -k netCDF-4 -b Short_Version_Aura_OMI_Level2_OMAERUV.003.cdl
+
+// Known CF-compliancy issues when this file is converted to a "CF-convention netCDF":
+// 1) data values are not present in the file.
+// 2) Missing the "units" attribute for some data variables whose values are of unitless.
+//    I am not sure what's the unit value for unitless data values such as aerosol 
+//    optical depth. In the HDF-EOS communit, NoUnits is commonly used but it's not
+//    CF-compliant value.
+
+// Contact: Wenli Yang, GES DISC, wenli.yang@nasa.gov
+
+netcdf {
+
+ // Template source: 
+ // ftp://aurapar2u.ecs.nasa.gov/data/s4pa/Aura_OMI_Level2/OMAERUV.003/2015/001/OMI-Aura_L2-OMAERUV_2015m0101t0130-o55655_v003-2015m0107t202422.he5
+
+ :Title = "OMI Aerosol Optical Depth and Single Scattering Albedo" ;
+ :Conventions = "CF-1.6.0" ;
+ :Institution = "NASA-GSFC" ;
+ 
+
+ // Dimensions
+ // Note: in HDF-EOS, the dimension names are stored in the structure metadata. If one uses ncdump to
+ // dump a HDF-EOS file, the dimension names in its structure will not be recognized by ncdump and
+ // the names will be shown as phony_dim_0, phony_dim_1, etc.
+
+ dimensions:
+   nTimes = 1644 ; // number of time steps in a swath, the same as number of along track data points, "Track".
+   nXtrack = 60 ;
+   nLayers = 5 ; // number of height layers. In CF, it should be named "height"
+   nWavel = 3 ;  // number of wavelengths. A more common name for this is "Band"
+
+
+ variables:
+
+ // Coordinate variables. 
+ // They are originally included in the "/HDFEOS/SWATHS/Aerosol NearUV Swath/Geolocation Fields/" group.
+ // Notice that 1) two time values are provided in this product, one UTC time and the other seconds in  
+ // the day; 2) the wavelength coordinate variable is not placed in the "geolocation fields" but in the 
+ // "data fields" because they are not "geo"; 3) the values for the "nLayer" coordinate is not included
+ // in this product. It should be provided to compliant with CF.
+
+  float latitude(nTimes, nXtrack) ;
+     latitude:units = "degrees_north" ;
+     latitude:long_name = "Geodetic latitude (deg)" ;
+     latitude:UniqueFieldDefinition = "Aura-Shared" ;
+		  
+   float longitude(nTimes, nXtrack) ;
+     longitude:units = "degrees_east" ;
+     longitude:long_name = "Geodetic longitude (deg)" ;
+     longitude:UniqueFieldDefinition = "Aura-Shared" ;
+  
+   double time(nTimes) ;
+     time:units = "s" ;
+     time:long_name = "Time at Start of Scan (s, TAI93)" ;
+     time:UniqueFieldDefinition = "Aura-Shared" ;
+		  
+  // the wavelength variable is placed in the "Data fields"		
+   float wavelength(nWavel) ;
+     wavelength:units = "nm" ;
+     wavelength:long_name = "Wavelength" ;
+     wavelength:UniqueFieldDefinition = "OMI-Specific" ;
+ 
+  // An additional coordinate variable for height, float height(nLayers), should be 
+  // included to compliant with CF. The height values are presented in the swath 
+  // attribute as shown above and can be readily used for a height coordinate 
+  // variable, as the following:		
+   float height(nLayers);
+     height:units = "km" ;
+     height:long_name = "vertical distance above the surface" ;
+     height:standard_name = "height" ;
+     height:positive = "up";
+     height:axis = "Z";
+
+
+ // Data variables.
+ // They are originally included in the "/HDFEOS/SWATHS/Aerosol NearUV Swath/Data Fields/" group.
+
+  float AIRSL3COvalue(nTimes, nXtrack) ;
+     AIRSL3COvalue:coordinates = "time latitude longitude" ;
+     AIRSL3COvalue:_FillValue = -9999.f ;
+     AIRSL3COvalue:missing_value = -9999.f ;
+     AIRSL3COvalue:add_offset = 0.f ;
+     AIRSL3COvalue:scale_factor = 1.f ;
+     AIRSL3COvalue:long_name = "AIRS CO L3 data" ;
+     AIRSL3COvalue:UniqueFieldDefinition = "OMI-Specific" ;
+
+   float AerosolAbsOpticalDepthVsHeight(nTimes, nXtrack, nLayers, nWavel) ;
+     AerosolAbsOpticalDepthVsHeight:coordinates = "time latitude longitude height wavelength" ;
+     AerosolAbsOpticalDepthVsHeight:_FillValue = -1.267651e+30f ;
+     AerosolAbsOpticalDepthVsHeight:missing_value = -1.267651e+30f ;
+     AerosolAbsOpticalDepthVsHeight:add_offset = 0.f ;
+     AerosolAbsOpticalDepthVsHeight:scale_factor = 1.f ;
+     AerosolAbsOpticalDepthVsHeight:long_name = "Aerosol Absorption Optical Depth (tau_abs) at 5 levels" ;		  
+     AerosolAbsOpticalDepthVsHeight:UniqueFieldDefinition = "OMI-Specific" ;
+		  
+   float FinalAerosolAbsOpticalDepth(nTimes, nXtrack, nWavel) ;
+     FinalAerosolAbsOpticalDepth:coordinates = "time latitude longitude wavelength" ;
+     FinalAerosolAbsOpticalDepth:_FillValue = -1.267651e+30f ;
+     FinalAerosolAbsOpticalDepth:missing_value = -1.267651e+30f ;
+     FinalAerosolAbsOpticalDepth:add_offset = 0.f ;
+     FinalAerosolAbsOpticalDepth:scale_factor = 1.f ;
+     FinalAerosolAbsOpticalDepth:long_name = "Best Aerosol Absorption Optical Depth (tau_abs)" ;
+     FinalAerosolAbsOpticalDepth:UniqueFieldDefinition = "OMI-Specific" ;
+ 
+   ushort MeasurementQualityFlags(nTimes) ;
+     MeasurementQualityFlags:coordinates = "time" ;
+     MeasurementQualityFlags:_FillValue = 65535US ;
+     MeasurementQualityFlags:missing_value = 65535US ;
+     MeasurementQualityFlags:long_name = "Measurement Quality Flags" ;
+     MeasurementQualityFlags:UniqueFieldDefinition = "OMI-Specific" ;
+
+  // Additional variables which are originally included in the swath's geolocation 
+  // fields but should be considered data variables in CF. Notice that in HDF-EOS,
+  // solar and viewing geometry variables are traditionally placed in geolocation
+  // fields (e.g., in MODIS L1B). 
+   float RelativeAzimuthAngle(nTimes, nXtrack) ;
+     RelativeAzimuthAngle:coordinates = "time latitude longitude" ;
+     RelativeAzimuthAngle:_FillValue = -1.267651e+30f ;
+     RelativeAzimuthAngle:missing_value = -1.267651e+30f ;
+     RelativeAzimuthAngle:units = "degrees" ;
+     RelativeAzimuthAngle:long_name = "Relative (sun + 180 - view) Azimuth Angle (deg)" ;
+     RelativeAzimuthAngle:UniqueFieldDefinition = "OMI-Specific" ;
+
+   float SolarZenithAngle(nTimes, nXtrack) ;
+     SolarZenithAngle:coordinates = "time latitude longitude" ;
+     SolarZenithAngle:_FillValue = -1.267651e+30f ;
+     SolarZenithAngle:missing_value = -1.267651e+30f ;
+     SolarZenithAngle:units = "degrees" ;
+     SolarZenithAngle:long_name = "Solar Zenith Angle (deg)" ;
+     SolarZenithAngle:UniqueFieldDefinition = "Aura-Shared" ;
+
+   float ViewingZenithAngle(nTimes, nXtrack) ;
+     ViewingZenithAngle:coordinates = "time latitude longitude" ;
+     ViewingZenithAngle:_FillValue = -1.267651e+30f ;
+     ViewingZenithAngle:missing_value = -1.267651e+30f ;
+     ViewingZenithAngle:units = "degrees" ;
+     ViewingZenithAngle:long_name = "Viewing Zenith Angle (deg)" ;
+     ViewingZenithAngle:UniqueFieldDefinition = "OMI-Specific" ;
+
+   ushort GroundPixelQualityFlags(nTimes, nXtrack) ;
+     GroundPixelQualityFlags:coordinates = "time latitude longitude" ;
+     GroundPixelQualityFlags:_FillValue = 65535US ;
+     GroundPixelQualityFlags:missing_value = 65535US ;
+     GroundPixelQualityFlags:long_name = "Ground Pixel Quality Flags" ;
+     GroundPixelQualityFlags:UniqueFieldDefinition = "OMI-Specific" ;
+	 
+   // the terrain pressure is actually a data variable. It contains the
+   // the pressure value at the terrain surface. The variable is not 
+   // used as coordinate for any other variables.
+   float TerrainPressure(nTimes, nXtrack) ;
+     TerrainPressure:coordinates = "time latitude longitude" ;
+     TerrainPressure:_FillValue = -1.267651e+30f ;
+     TerrainPressure:missing_value = -1.267651e+30f ;
+     TerrainPressure:add_offset = 0.f ;
+     TerrainPressure:scale_factor = 1.f ;
+     TerrainPressure:units = "mbar" ;
+     TerrainPressure:long_name = "Terrain Pressure (mbar)" ;
+     TerrainPressure:UniqueFieldDefinition = "Aura-Shared" ;
+
+  // Data values are not included in this example
+  data:
+
+}
