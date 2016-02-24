@@ -5,14 +5,14 @@
 // Comments, questions, suggestions to fxm
 
 // Usage:
-// ncgen             -b -o modis_l2_swath.nc modis_l2_swath.cdl # netCDF3
-// ncgen -k netCDF-4 -b -o modis_l2_swath.nc modis_l2_swath.cdl # netCDF4
+// ncgen             -b -o swath_modis_l2.nc swath_modis_l2.cdl # netCDF3
+// ncgen -k netCDF-4 -b -o swath_modis_l2.nc swath_modis_l2.cdl # netCDF4
 
 // URL: 
 // git clone http://github.com/diwg/diwg.git
-// http://github.com/diwg/diwg/modis_l2_swath.cdl
+// http://github.com/diwg/diwg/swath_modis_l2.cdl
 
-netcdf modis_l2_swath {
+netcdf swath_modis_l2 {
 
 // Template source: MOD04_L2.A2010091.0950.051.2010104212718.hdf
   dimensions:

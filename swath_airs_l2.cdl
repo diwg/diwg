@@ -1,0 +1,161 @@
+// -*-C++-*-
+
+// Purpose: CDL file to demonstrate best practices for curvilinear datasets, aka, Swaths
+// Part of an ongoing project by NASA's Dataset Interoperability Working Group (DIWG)
+// Comments, questions, suggestions to fxm
+
+// Usage:
+// ncgen             -b -o swath_airs_l2.nc swath_airs_l2.cdl # netCDF3
+// ncgen -k netCDF-4 -b -o swath_airs_l2.nc swath_airs_l2.cdl # netCDF4
+
+// URL: 
+// git clone http://github.com/diwg/diwg.git
+// http://github.com/diwg/diwg/swath_airs_l2.cdl
+
+netcdf swath_airs_l2 { 
+  // Template source AIRS.2014.10.01.202.L2.RetStd.v6.0.11.0.G14275134307.hdf.nc: filetype = NC_FORMAT_CLASSIC (representation of extended/underlying filetype NC_FORMAT_NC3), 0 groups (max. depth = 0), 26 dimensions (26 fixed, 0 record), 189 variables (189 atomic-type, 0 non-atomic), 1158 attributes (628 global, 0 group, 530 variable)
+  dimensions:
+    AIRSTrack = 3 ;
+    AIRSTrack_L2_Standard_atmospheric_surface_product = 3 ;
+    AIRSXTrack = 3 ;
+    AIRSXTrack_L2_Standard_atmospheric_surface_product = 3 ;
+    CH4Func = 10 ;
+    COFunc = 9 ;
+    Cloud = 2 ;
+    Cloud_L2_Standard_atmospheric_surface_product = 2 ;
+    GeoTrack = 45 ;
+    GeoTrack_L2_Standard_atmospheric_surface_product = 45 ;
+    GeoXTrack = 30 ;
+    GeoXTrack_L2_Standard_atmospheric_surface_product = 30 ;
+    H2OFunc = 11 ;
+    H2OPressureLay = 14 ;
+    H2OPressureLay_L2_Standard_atmospheric_surface_product = 14 ;
+    H2OPressureLev = 15 ;
+    H2OPressureLev_L2_Standard_atmospheric_surface_product = 15 ;
+    HingeSurf = 100 ;
+    HingeSurf_L2_Standard_atmospheric_surface_product = 100 ;
+    MWHingeSurf = 7 ;
+    MWHingeSurf_L2_Standard_atmospheric_surface_product = 7 ;
+    O3Func = 9 ;
+    StdPressureLay = 28 ;
+    StdPressureLay_L2_Standard_atmospheric_surface_product = 28 ;
+    StdPressureLev = 28 ;
+    StdPressureLev_L2_Standard_atmospheric_surface_product = 28 ;
+
+  variables:
+    int AIRSTrack(AIRSTrack) ;
+      AIRSTrack:units = "level" ;
+      AIRSTrack:long_name = "AIRSTrack(fake)" ;
+
+    short AIRSTrack_L2_Standard_atmospheric_surface_product_NONEOS(AIRSTrack_L2_Standard_atmospheric_surface_product) ;
+      AIRSTrack_L2_Standard_atmospheric_surface_product_NONEOS:long_name = "Along-track subspot" ;
+      AIRSTrack_L2_Standard_atmospheric_surface_product_NONEOS:units = "None" ;
+      AIRSTrack_L2_Standard_atmospheric_surface_product_NONEOS:format = "I1" ;
+
+    int AIRSXTrack(AIRSXTrack) ;
+      AIRSXTrack:units = "level" ;
+      AIRSXTrack:long_name = "AIRSXTrack(fake)" ;
+
+    short AIRSXTrack_L2_Standard_atmospheric_surface_product_NONEOS(AIRSXTrack_L2_Standard_atmospheric_surface_product) ;
+      AIRSXTrack_L2_Standard_atmospheric_surface_product_NONEOS:long_name = "Across-track subspot" ;
+      AIRSXTrack_L2_Standard_atmospheric_surface_product_NONEOS:units = "None" ;
+      AIRSXTrack_L2_Standard_atmospheric_surface_product_NONEOS:format = "I1" ;
+
+    int CH4Func(CH4Func) ;
+      CH4Func:units = "level" ;
+      CH4Func:long_name = "CH4Func(fake)" ;
+
+    float CH4VMRLevStd(GeoTrack,GeoXTrack,StdPressureLev) ;
+      CH4VMRLevStd:coordinates = "Latitude Longitude pressStd" ;
+      CH4VMRLevStd:long_name = "CH4VMRLevStd" ;
+      CH4VMRLevStd:_FillValue = -9999.f ;
+
+    int CH4VMRLevStd_QC(GeoTrack,GeoXTrack,StdPressureLev) ;
+      CH4VMRLevStd_QC:coordinates = "Latitude Longitude pressStd" ;
+      CH4VMRLevStd_QC:long_name = "CH4VMRLevStd_QC" ;
+      CH4VMRLevStd_QC:_FillValue = 65534 ;
+
+    float CH4_total_column(GeoTrack,GeoXTrack) ;
+      CH4_total_column:coordinates = "Latitude Longitude" ;
+      CH4_total_column:long_name = "CH4_total_column" ;
+      CH4_total_column:_FillValue = -9999.f ;
+
+    int CH4_total_column_QC(GeoTrack,GeoXTrack) ;
+      CH4_total_column_QC:coordinates = "Latitude Longitude" ;
+      CH4_total_column_QC:long_name = "CH4_total_column_QC" ;
+      CH4_total_column_QC:_FillValue = 65534 ;
+
+    float CldFrcStd(GeoTrack,GeoXTrack,AIRSTrack,AIRSXTrack,Cloud) ;
+      CldFrcStd:coordinates = "Latitude Longitude AIRSTrack AIRSXTrack Cloud" ;
+      CldFrcStd:long_name = "CldFrcStd" ;
+      CldFrcStd:_FillValue = -9999.f ;
+
+    int Cloud(Cloud) ;
+      Cloud:units = "level" ;
+      Cloud:long_name = "Cloud(fake)" ;
+
+    double Latitude(GeoTrack,GeoXTrack) ;
+      Latitude:units = "degrees_north" ;
+      Latitude:long_name = "Latitude" ;
+
+    double Longitude(GeoTrack,GeoXTrack) ;
+      Longitude:units = "degrees_east" ;
+      Longitude:long_name = "Longitude" ;
+
+    int StdPressureLay(StdPressureLay) ;
+      StdPressureLay:units = "level" ;
+      StdPressureLay:long_name = "StdPressureLay(fake)" ;
+
+    float StdPressureLay_L2_Standard_atmospheric_surface_product_NONEOS(StdPressureLay_L2_Standard_atmospheric_surface_product) ;
+      StdPressureLay_L2_Standard_atmospheric_surface_product_NONEOS:long_name = "Mid-layer pressure" ;
+      StdPressureLay_L2_Standard_atmospheric_surface_product_NONEOS:units = "hPa" ;
+      StdPressureLay_L2_Standard_atmospheric_surface_product_NONEOS:format = "F7.2" ;
+
+    float StdPressureLev_L2_Standard_atmospheric_surface_product_NONEOS(StdPressureLev_L2_Standard_atmospheric_surface_product) ;
+      StdPressureLev_L2_Standard_atmospheric_surface_product_NONEOS:long_name = "Pressure" ;
+      StdPressureLev_L2_Standard_atmospheric_surface_product_NONEOS:units = "hPa" ;
+      StdPressureLev_L2_Standard_atmospheric_surface_product_NONEOS:format = "F7.2" ;
+
+    float TSurfStd(GeoTrack,GeoXTrack) ;
+      TSurfStd:coordinates = "Latitude Longitude" ;
+      TSurfStd:long_name = "TSurfStd" ;
+      TSurfStd:_FillValue = -9999.f ;
+
+    double Time(GeoTrack,GeoXTrack) ;
+      Time:coordinates = "Latitude Longitude" ;
+      Time:long_name = "Time" ;
+
+    float latAIRS(GeoTrack,GeoXTrack,AIRSTrack,AIRSXTrack) ;
+      latAIRS:coordinates = "Latitude Longitude AIRSTrack AIRSXTrack" ;
+      latAIRS:long_name = "latAIRS" ;
+      latAIRS:_FillValue = -9999.f ;
+
+    float lonAIRS(GeoTrack,GeoXTrack,AIRSTrack,AIRSXTrack) ;
+      lonAIRS:coordinates = "Latitude Longitude AIRSTrack AIRSXTrack" ;
+      lonAIRS:long_name = "lonAIRS" ;
+      lonAIRS:_FillValue = -9999.f ;
+
+    float pressH2O(H2OPressureLev) ;
+      pressH2O:long_name = "pressH2O" ;
+
+    float pressStd(StdPressureLev) ;
+      pressStd:long_name = "pressStd" ;
+
+    double sat_lat(GeoTrack) ;
+      sat_lat:coordinates = "Latitude" ;
+      sat_lat:long_name = "sat_lat" ;
+
+    double sat_lon(GeoTrack) ;
+      sat_lon:coordinates = "Latitude" ;
+      sat_lon:long_name = "sat_lon" ;
+
+    float satazi(GeoTrack,GeoXTrack) ;
+      satazi:coordinates = "Latitude Longitude" ;
+      satazi:long_name = "satazi" ;
+      satazi:_FillValue = -9999.f ;
+
+  // global attributes:
+    :HDF_GLOBAL.HDFEOSVersion = "HDFEOS_V2.18" ;
+    :HDF_GLOBAL.identifier_product_doi = "10.5067/AQUA/AIRS/DATA201" ;
+    :HDF_GLOBAL.identifier_product_doi_authority = "http://dx.doi.org/" ;
+} // group /
