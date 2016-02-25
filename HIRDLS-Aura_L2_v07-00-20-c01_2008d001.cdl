@@ -1,23 +1,26 @@
-// Purpose: A simplified CDL example the Level 2 Aura HIRDLS product files in HDF5-based 
-// HDF-EOS format archived in NASA GES DISC. This file shows how a Level 2 vertical 
-// profile swath data file is usually encoded in the HDF-EOS convention and how they can
-// be converted to a netCDF structure with CF convention. 
- 
-// Please notice that many HDF products contains variables with the "units" attribute
-// value being set as "NoUnit". In this example, Value "1" is used instead. See the 
-// comment before the last variable "temperatureQuality".
+// Purpose: A simplified CDL example the Level 2 Aura HIRDLS product files in
+// HDF5-based HDF-EOS format archived in NASA GES DISC. This file shows how a
+// Level 2 vertical profile swath data file is usually encoded in the HDF-EOS
+// convention and how they can be converted to a netCDF structure with CF
+// convention.
 
-// Please also notice that the file, though being compliant with HDF-EOS standard, also 
-// uses HDF5's "Dimension Scale" approach in associating data point with coordinates. 
-// This is reflected by the HDF5 reserved attribute name "DIMENSION_LIST". The value 
-// in this attribute are the references of HDF5 objects from which the coordinate 
-// datasets can be identified. In this example, this attribute is included in variables
-// to demonstrate how HDF5 deals with dimension mapping. But the attribute must be 
-// comment out when using ncgen to convert it to NetCDF-4. NetCDF-3 is OK.
+// Please notice that many HDF products contains variables with the "units"
+// attribute value being set as "NoUnit". In this example, Value "1" is used
+// instead. See the comment before the last variable "temperatureQuality".
 
-// This file can be converted to a nc3 or a nc4 file, but the DIMENSION_LIST attribute 
-// must be commented out in case of nc4. The output nc3/nc4 file should pass CF checker 
-// except that no actual data values are included in the file.
+// Please also notice that the file, though being compliant with HDF-EOS
+// standard, also uses HDF5's "Dimension Scale" approach in associating data
+// point with coordinates. This is reflected by the HDF5 reserved attribute
+// name "DIMENSION_LIST". The value in this attribute are the references of
+// HDF5 objects from which the coordinate datasets can be identified. In this
+// example, this attribute is included in variables to demonstrate how HDF5
+// deals with dimension mapping. But the attribute must be comment out when
+// using ncgen to convert it to NetCDF-4. NetCDF-3 is OK.
+
+// This file can be converted to a nc3 or a nc4 file, but the DIMENSION_LIST
+// attribute must be commented out in case of nc4. The output nc3/nc4 file
+// should pass CF checker except that no actual data values are included in the
+// file.
 // ncgen -b HIRDLS-Aura_L2_v07-00-20-c01_2008d001.cdl
 // ncgen -k netCDF-4 -b HIRDLS-Aura_L2_v07-00-20-c01_2008d001.cdl
 
@@ -26,7 +29,7 @@
 
 netcdf HIRDLS-Aura_L2_v07-00-20-c01_2008d001 {
 
- // Template source: 
+ // Template source:
  // ftp://acdisc.sci.gsfc.nasa.gov/ftp/data/s4pa/Aura_HIRDLS_Level2/HIRDLS2.007/2008/HIRDLS-Aura_L2_v07-00-20-c01_2008d001.he5
 
  :Title = "Example of 2D vertical profile Swath based on Aura HIRDLS Level 2 HDF-EOS file" ;
@@ -34,9 +37,10 @@ netcdf HIRDLS-Aura_L2_v07-00-20-c01_2008d001 {
  :Institution = "NASA-GSFC" ;
 
  // Dimensions
- // Note: in HDF-EOS, the dimension names are stored in the structure metadata. If one uses
- // ncdump to dump a HDF-EOS file, the dimension names in its structure will not be recognized 
- // by ncdump and the names will be shown as phony_dim_0, phony_dim_1, etc.
+ // Note: in HDF-EOS, the dimension names are stored in the structure metadata.
+ // If one uses ncdump to dump a HDF-EOS file, the dimension names in its
+ // structure will not be recognized by ncdump and the names will be shown as
+ // phony_dim_0, phony_dim_1, etc.
 
  dimensions:
    nLevels = 121 ; // number of pressure layers. This is the profile height.
@@ -45,19 +49,21 @@ netcdf HIRDLS-Aura_L2_v07-00-20-c01_2008d001 {
 
  variables:
 
- // Coordinate variables. 
- 
- // They are originally included in the "/HDFEOS/SWATHS/HIRDLS/Geolocation Fields/" group and are
- // moved to the top here as coordinate variable, with some changes to attributes in order to be  
- // compliant with CF-1.6. 
- // It should be noticed that 
- // 1) There are only two the real coordinates, one being "time", whose size is the number of the 
- //    along track points in the swath, and the other is "pressure" which defines the 
- //    profile's vertical coordinate along which measurements are taken. The altitude, latitude, 
- //    and longitude variables provide the location of of swath points in the 3D space. 
- // 2) In addition to the variables listed here, there are more than a dozen additional variables
- //    the science team considered as "geolocation" variables, among which are the solar and viewing
- //    geometry variables that can be found in most L1/L2 NASA EOS swath data files.
+ // Coordinate variables.
+
+ // They are originally included in the "/HDFEOS/SWATHS/HIRDLS/Geolocation
+ // Fields/" group and are moved to the top here as coordinate variable, with
+ // some changes to attributes in order to be compliant with CF-1.6.
+ // It should be noticed that
+ // 1) There are only two the real coordinates, one being "time", whose size is
+ //    the number of the along track points in the swath, and the other is
+ //    "pressure" which defines the profile's vertical coordinate along which
+ //    measurements are taken. The altitude, latitude, and longitude variables
+ //    provide the location of of swath points in the 3D space.
+ // 2) In addition to the variables listed here, there are more than a dozen
+ //    additional variables the science team considered as "geolocation"
+ //    variables, among which are the solar and viewing geometry variables that
+ //    can be found in most L1/L2 NASA EOS swath data files.
   double time(nTimes) ;
      time:long_name = "time" ;
      time:units = "seconds since 1993-01-01 00:00:00" ;
@@ -79,41 +85,43 @@ netcdf HIRDLS-Aura_L2_v07-00-20-c01_2008d001 {
      latitude:units = "degrees_north" ;
      latitude:long_name = "Geodetic latitude (deg)" ;
      // latitude:DIMENSION_LIST = "1-58650071,1-58649775";
-				
+
 
  // Data variables.
 
- // There are more than six dozens of "data" variables included in this HIRDLS HDF-EOS file.
- // They are either of two-dimensional, i.e., along the time and pressure coordinate, or only
- // of one-dimension, i.e., changes only along the time coordinate but not along the vertical
- // pressure coordinate. Only one of each such variables are included in this example.
+ // There are more than six dozens of "data" variables included in this HIRDLS
+ // HDF-EOS file. They are either of two-dimensional, i.e., along the time and
+ // pressure coordinate, or only of one-dimension, i.e., changes only along the
+ // time coordinate but not along the vertical pressure coordinate. Only one of
+ // each such variables are included in this example.
  float temperature(nTimes, nLevels) ;
-    temperature:coordinates = "longitude latitude altitude" ; 
+    temperature:coordinates = "longitude latitude altitude" ;
     temperature:_FillValue = -999.f ;
     temperature:missing_value = -999.f ;
     temperature:long_name = "temperature" ;
     temperature:units = "K" ;
     // temperature:DIMENSION_LIST = "1-58650071,1-58649775";
 
- // CF recommands, although not requires, "units" for all variables. Many HDF-EOS
- // data include variables without unit, such as some index based variables and
- // quality variables. It is a common practice in HDF-EOS community to use "NoData"
- // as the value of such variables but the "NoData" value is considered as not CF
- // compliant. It seems that simply using "1" as unit value might be a good option.
- // It will be vary appropriate in some index based variable, such as the popular
- // "Normalizaed Difference Vegetation Index" in the land remote sensing area, where
- // people sometimes using a longer "1 NDVI unit" as a unit. In this example, I use
- // "1" to replace the original "NoUnit".
+ // CF recommands, although not requires, "units" for all variables. Many HDF-
+ // EOS data include variables without unit, such as some index based variables
+ // and quality variables. It is a common practice in HDF-EOS community to use
+ // "NoData" as the value of such variables but the "NoData" value is
+ // considered as not CF compliant. It seems that simply using "1" as unit
+ // value might be a good option. It will be vary appropriate in some index
+ // based variable, such as the popular "Normalizaed Difference Vegetation
+ // Index" in the land remote sensing area, where people sometimes using a
+ // longer "1 NDVI unit" as a unit. In this example, I use "1" to replace the
+ // original "NoUnit".
  byte temperatureQuality(nTimes) ;
-    temperatureQuality:coordinates = "longitude latitude altitude" ; 
+    temperatureQuality:coordinates = "longitude latitude altitude" ;
     temperatureQuality:_FillValue = -99b ;
     temperatureQuality:missing_value = -99b ;
     temperatureQuality:long_name = "temperature quality" ;
     temperatureQuality:units = "1" ;
     // temperatureQuality:DIMENSION_LIST = "1-58650071";
 
-	
+
  // Data values are not included in this example
  data:
-				
+
 }

@@ -1,18 +1,19 @@
 // -*-C++-*-
 
-// Purpose: CDL equivalent of the Level 2 OMI OMAERUV product files in HDF5-based HDF-EOS
-// format archived in NASA GES DISC. The files shows how a Level 2 swath data file is
-// usually encoded in the HDF-EOS convention and how they can be converted to a netCDF  
-// structure with CF convention.
+// Purpose: CDL equivalent of the Level 2 OMI OMAERUV product files in
+// HDF5-based HDF-EOS format archived in NASA GES DISC. The files shows how a
+// Level 2 swath data file is usually encoded in the HDF-EOS convention and how
+// they can be converted to a netCDF structure with CF convention.
 
-// In this example, the original group structure is flattened. Variables are re-ordered into
-// CF's coordinate and data variables. But minimal changes are made to the attribute names, so
-// that readers can get an understanding of what information a L2 data product contains,
-// particularly the coordinates, attributes, and metadata. A simplified, CF-compliant example
-// will later be derived from this file.
+// In this example, the original group structure is flattened. Variables are
+// re-ordered into CF's coordinate and data variables. But minimal changes are
+// made to the attribute names, so that readers can get an understanding of
+// what information a L2 data product contains, particularly the coordinates,
+// attributes, and metadata. A simplified, CF-compliant example will later be
+// derived from this file.
 
-// This file can be converted to a nc4 file, but not a nc3 data file using ncgen because
-// the ubyte and ushort variables are not supported by netCDF3:
+// This file can be converted to a nc4 file, but not a nc3 data file using
+// ncgen because the ubyte and ushort variables are not supported by netCDF3:
 // ncgen -k netCDF-4 -b Aura_OMI_Level2_OMAERUV.003.cdl
 
 // Contact: Wenli Yang, GES DISC, wenli.yang@nasa.gov
@@ -23,12 +24,13 @@ netcdf {
  // ftp://aurapar2u.ecs.nasa.gov/data/s4pa/Aura_OMI_Level2/OMAERUV.003/2015/001/OMI-Aura_L2-OMAERUV_2015m0101t0130-o55655_v003-2015m0107t202422.he5
 
  // File level (global) attributes.
- // All file level are originally in /HDFEOS/ADDITIONAL/FILE_ATTRIBUTES/ group, except for
- // the "HDFEOSVersion" attribute which is in the "/HDFEOS INFORMATION/" group. In addition,
- // the "/HDFEOS INFORMATION/" group also contains three string variable each being metadata for the
- // file. They are the ArchiveMetadata, the CoreMetadata, and the StructMetadata, among which the
- // StructMetadata tells the variables dimensionality and dimension names.
- 
+ // All file level are originally in /HDFEOS/ADDITIONAL/FILE_ATTRIBUTES/ group,
+ // except for the "HDFEOSVersion" attribute which is in the "/HDFEOS
+ // INFORMATION/" group. In addition, the "/HDFEOS INFORMATION/" group also
+ // contains three string variable each being metadata for the file. They are
+ // the ArchiveMetadata, the CoreMetadata, and the StructMetadata, among which
+ // the StructMetadata tells the variables dimensionality and dimension names.
+
  :HDFEOSVersion = "HDFEOS_5.1.11" ;
  :AuthorAffiliation = "NASA-GSFC" ;
  :AuthorName = "Omar Torres" ;
@@ -43,7 +45,7 @@ netcdf {
  :ProcessingCenter = "OMI SIPS" ;
  :ProcessingHost = "Linux omin1035 2.6.18-348.6.1.el5PAE i686" ;
  :TAI93At0zOfGranule = 694224008. ;
-    
+
  // Swath attributes, originally in the "/HDFEOS/SWATHS/Aerosol NearUV Swath" group.
  // Because there is only one swath in this product, these attributes can also be considered at global level.
  // Some of the attributes can be used to create the coordinate variables such as the altitude values.
@@ -53,11 +55,12 @@ netcdf {
  :Altitude = 0.f, 1.5f, 3.f, 6.f, 10.f ;
  :SwathName = "OMI Aerosol Optical Depth and Single Scattering Albedo" ;
  :VerticalCoordinate = "Altitude" ;
-    
+
  // Dimensions
- // Note: in HDF-EOS, the dimension names are stored in the structure metadata. If one uses ncdump to
- // dump a HDF-EOS file, the dimension names in its structure will not be recognized by ncdump and
- // the names will be shown as phony_dim_0, phony_dim_1, etc.
+ // Note: in HDF-EOS, the dimension names are stored in the structure metadata.
+ // If one uses ncdump to dump a HDF-EOS file, the dimension names in its
+ // structure will not be recognized by ncdump and the names will be shown as
+ // phony_dim_0, phony_dim_1, etc.
 
  dimensions:
    nTimes = 1644 ; // number of time steps in a swath, the same as number of along track data points, "Track".
@@ -68,11 +71,13 @@ netcdf {
  variables:
 
 // Coordinate variables.
-// They are originally included in the "/HDFEOS/SWATHS/Aerosol NearUV Swath/Geolocation Fields/" group.
-// Notice that 1) two time values are provided in this product, one UTC time and the other seconds in  
-// the day; 2) the wavelength coordinate variable is not placed in the "geolocation fields" but in the
-// "data fields" because they are not "geo"; 3) the values for the "nLayer" coordinate is not included
-// in this product. It should be provided to compliant with CF.
+// They are originally included in the "/HDFEOS/SWATHS/Aerosol NearUV
+// Swath/Geolocation Fields/" group. Notice that 1) two time values are
+// provided in this product, one UTC time and the other seconds in the day; 2)
+// the wavelength coordinate variable is not placed in the "geolocation fields"
+// but in the "data fields" because they are not "geo"; 3) the values for the
+// "nLayer" coordinate is not included in this product. It should be provided
+// to compliant with CF.
    float Latitude(nTimes, nXtrack) ;
      Latitude:_FillValue = -1.267651e+30f ;
      Latitude:MissingValue = -1.267651e+30f ;
@@ -81,7 +86,7 @@ netcdf {
      Latitude:Units = "deg" ;
      Latitude:Title = "Geodetic Latitude (deg)" ;
      Latitude:UniqueFieldDefinition = "Aura-Shared" ;
-          
+
    float Longitude(nTimes, nXtrack) ;
      Longitude:_FillValue = -1.267651e+30f ;
      Longitude:MissingValue = -1.267651e+30f ;
@@ -90,7 +95,7 @@ netcdf {
      Longitude:Units = "deg" ;
      Longitude:Title = "Geodetic Longitude (deg)" ;
      Longitude:UniqueFieldDefinition = "Aura-Shared" ;
- 
+
    float SecondsInDay(nTimes) ;
      SecondsInDay:Units = "s" ;
      SecondsInDay:_FillValue = -1.267651e+30f ;
@@ -99,7 +104,7 @@ netcdf {
      SecondsInDay:ScaleFactor = 1. ;
      SecondsInDay:Title = "Seconds of Day at Start of Scan" ;
      SecondsInDay:UniqueFieldDefinition = "Aura-Shared" ;
-          
+
    double Time(nTimes) ;
      Time:_FillValue = -1.26765060022823e+30 ;
      Time:MissingValue = -1.26765060022823e+30 ;
@@ -109,7 +114,7 @@ netcdf {
      Time:Title = "Time at Start of Scan (s, TAI93)" ;
      Time:UniqueFieldDefinition = "Aura-Shared" ;
 
-  // the wavelength variable is placed in the "Data fields"        
+  // the wavelength variable is placed in the "Data fields"
    float Wavelength(nWavel) ;
      Wavelength:Units = "nm" ;
      Wavelength:_FillValue = -1.267651e+30f ;
@@ -118,7 +123,7 @@ netcdf {
      Wavelength:ScaleFactor = 1. ;
      Wavelength:Title = "Wavelength" ;
      Wavelength:UniqueFieldDefinition = "OMI-Specific" ;
- 
+
    float TerrainPressure(nTimes, nXtrack) ;
      TerrainPressure:_FillValue = -1.267651e+30f ;
      TerrainPressure:MissingValue = -1.267651e+30f ;
@@ -127,11 +132,11 @@ netcdf {
      TerrainPressure:Units = "mbar" ;
      TerrainPressure:Title = "Terrain Pressure (mbar)" ;
      TerrainPressure:UniqueFieldDefinition = "Aura-Shared" ;
- 
-  // An additional coordinate variable for height, float height(nLayers), should be
-  // included to compliant with CF. The height values are presented in the swath
-  // attribute as shown above and can be readily used for a height coordinate
-  // variable, as the following:        
+
+  // An additional coordinate variable for height, float height(nLayers),
+  // should be included to compliant with CF. The height values are presented
+  // in the swath attribute as shown above and can be readily used for a height
+  // coordinate variable, as the following:
    float height(nLayers);
      height:units = "km" ;
      height:long_name = "vertical distance above the surface" ;
@@ -140,7 +145,8 @@ netcdf {
      height:axis = "Z";
 
  // Data variables.
- // They are originally included in the "/HDFEOS/SWATHS/Aerosol NearUV Swath/Data Fields/" group.
+ // They are originally included in the "/HDFEOS/SWATHS/Aerosol NearUV
+ // Swath/Data Fields/" group.
    float AIRSL3COvalue(nTimes, nXtrack) ;
      AIRSL3COvalue:_FillValue = -9999.f ;
      AIRSL3COvalue:MissingValue = -9999.f ;
@@ -156,7 +162,7 @@ netcdf {
      AerosolAbsOpticalDepthVsHeight:Offset = 0. ;
      AerosolAbsOpticalDepthVsHeight:ScaleFactor = 1. ;
      AerosolAbsOpticalDepthVsHeight:Units = "NoUnits" ;
-     AerosolAbsOpticalDepthVsHeight:Title = "Aerosol Absorption Optical Depth (tau_abs) at 5 levels" ;          
+     AerosolAbsOpticalDepthVsHeight:Title = "Aerosol Absorption Optical Depth (tau_abs) at 5 levels" ;
      AerosolAbsOpticalDepthVsHeight:UniqueFieldDefinition = "OMI-Specific" ;
 
    float AerosolOpticalDepthVsHeight(nTimes, nXtrack, nLayers, nWavel) ;
@@ -167,7 +173,7 @@ netcdf {
      AerosolOpticalDepthVsHeight:Units = "NoUnits" ;
      AerosolOpticalDepthVsHeight:Title = "Aerosol Optical Depth (tau) at 5 levels" ;
      AerosolOpticalDepthVsHeight:UniqueFieldDefinition = "OMI-Specific" ;
- 
+
    float AerosolSingleScattAlbVsHeight(nTimes, nXtrack, nLayers, nWavel) ;
      AerosolSingleScattAlbVsHeight:_FillValue = -1.267651e+30f ;
      AerosolSingleScattAlbVsHeight:MissingValue = -1.267651e+30f ;
@@ -176,7 +182,7 @@ netcdf {
      AerosolSingleScattAlbVsHeight:Units = "NoUnits" ;
      AerosolSingleScattAlbVsHeight:Title = "Aerosol Single Scattering Albedo (omega0) at 5 levels" ;
      AerosolSingleScattAlbVsHeight:UniqueFieldDefinition = "OMI-Specific" ;
- 
+
    ubyte AerosolType(nTimes, nXtrack) ;
      AerosolType:_FillValue = 255UB ;
      AerosolType:MissingValue = 255UB ;
@@ -185,7 +191,7 @@ netcdf {
      AerosolType:Units = "NoUnits" ;
      AerosolType:Title = "Aerosol Type" ;
      AerosolType:UniqueFieldDefinition = "OMI-Specific" ;
- 
+
    ushort AlgorithmFlagsVsHeight(nTimes, nXtrack, nLayers) ;
      AlgorithmFlagsVsHeight:_FillValue = 65535US ;
      AlgorithmFlagsVsHeight:MissingValue = 65535US ;
@@ -194,7 +200,7 @@ netcdf {
      AlgorithmFlagsVsHeight:Units = "NoUnits" ;
      AlgorithmFlagsVsHeight:Title = "Algorithm Flags Vs Height" ;
      AlgorithmFlagsVsHeight:UniqueFieldDefinition = "OMI-Specific" ;
-          
+
    float FinalAerosolAbsOpticalDepth(nTimes, nXtrack, nWavel) ;
      FinalAerosolAbsOpticalDepth:_FillValue = -1.267651e+30f ;
      FinalAerosolAbsOpticalDepth:MissingValue = -1.267651e+30f ;
@@ -203,7 +209,7 @@ netcdf {
      FinalAerosolAbsOpticalDepth:Units = "NoUnits" ;
      FinalAerosolAbsOpticalDepth:Title = "Best Aerosol Absorption Optical Depth (tau_abs)" ;
      FinalAerosolAbsOpticalDepth:UniqueFieldDefinition = "OMI-Specific" ;
- 
+
    float FinalAerosolLayerHeight(nTimes, nXtrack) ;
      FinalAerosolLayerHeight:_FillValue = -1.267651e+30f ;
      FinalAerosolLayerHeight:MissingValue = -1.267651e+30f ;
@@ -212,7 +218,7 @@ netcdf {
      FinalAerosolLayerHeight:Units = "km" ;
      FinalAerosolLayerHeight:Title = "Final Aerosol Layer Height (km)" ;
      FinalAerosolLayerHeight:UniqueFieldDefinition = "OMI-Specific" ;
- 
+
    float FinalAerosolOpticalDepth(nTimes, nXtrack, nWavel) ;
      FinalAerosolOpticalDepth:_FillValue = -1.267651e+30f ;
      FinalAerosolOpticalDepth:MissingValue = -1.267651e+30f ;
@@ -228,7 +234,8 @@ netcdf {
      FinalAerosolSingleScattAlb:Offset = 0. ;
      FinalAerosolSingleScattAlb:ScaleFactor = 1. ;
      FinalAerosolSingleScattAlb:Units = "NoUnits" ;
-     FinalAerosolSingleScattAlb:Title = "Best Aerosol Single Scattering Albedo (omega0)" ;
+     FinalAerosolSingleScattAlb:Title
+        = "Best Aerosol Single Scattering Albedo (omega0)" ;
      FinalAerosolSingleScattAlb:UniqueFieldDefinition = "OMI-Specific" ;
 
    ushort FinalAlgorithmFlags(nTimes, nXtrack) ;
@@ -248,7 +255,7 @@ netcdf {
      ImaRefractiveIndex:Units = "NoUnits" ;
      ImaRefractiveIndex:Title = "Imaginary refractive Index" ;
      ImaRefractiveIndex:UniqueFieldDefinition = "OMI-Specific" ;
- 
+
    ushort MeasurementQualityFlags(nTimes) ;
      MeasurementQualityFlags:_FillValue = 65535US ;
      MeasurementQualityFlags:MissingValue = 65535US ;
@@ -275,7 +282,7 @@ netcdf {
      PixelQualityFlags:Units = "NoUnits" ;
      PixelQualityFlags:Title = "Pixel Quality Flags" ;
      PixelQualityFlags:UniqueFieldDefinition = "OMI-Specific" ;
-          
+
    float Reflectivity(nTimes, nXtrack, nWavel) ;
      Reflectivity:_FillValue = -1.267651e+30f ;
      Reflectivity:MissingValue = -1.267651e+30f ;
@@ -293,7 +300,7 @@ netcdf {
      SurfaceAlbedo:Units = "NoUnits" ;
      SurfaceAlbedo:Title = "Surface Albedo" ;
      SurfaceAlbedo:UniqueFieldDefinition = "OMI-Specific" ;
- 
+
    float UVAerosolIndex(nTimes, nXtrack) ;
      UVAerosolIndex:_FillValue = -1.267651e+30f ;
      UVAerosolIndex:MissingValue = -1.267651e+30f ;
@@ -303,10 +310,10 @@ netcdf {
      UVAerosolIndex:Title = "UV Aerosol Index" ;
      UVAerosolIndex:UniqueFieldDefinition = "OMI-Specific" ;
 
-  // Additional variables which are originally included in the swath's geolocation
-  // fields but should be considered data variables in CF. Notice that in HDF-EOS,
-  // solar and viewing geometry variables are traditionally placed in geolocation
-  // fields (e.g., in MODIS L1B).
+  // Additional variables which are originally included in the swath's
+  // geolocation fields but should be considered data variables in CF. Notice
+  // that in HDF-EOS, solar and viewing geometry variables are traditionally
+  // placed in geolocation fields (e.g., in MODIS L1B).
    float RelativeAzimuthAngle(nTimes, nXtrack) ;
      RelativeAzimuthAngle:_FillValue = -1.267651e+30f ;
      RelativeAzimuthAngle:MissingValue = -1.267651e+30f ;
