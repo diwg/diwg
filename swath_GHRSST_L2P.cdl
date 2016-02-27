@@ -1,0 +1,249 @@
+// Purpose: The following CDL represents an example of the structure of a
+// GHRSST Level 2P file for an SST data set derived from the Sentinel-3A Sea
+// and Land Surface Temperature (SLSTR) data set. Its straight from the GHRSST
+// Data Processing Specification version 2. The dimensions ni and nj represent
+// the satellite across and along track (or scan) coordinates respectively.
+// Other important variables are time, lon, lat for positioning satellite
+// observations/information found in the sea_surface_temperature, sst_dtime,
+// sses_bias, sses_standard_deviation, and quality_level variables (and
+// others).
+
+// Part of an ongoing project by NASA's Dataset Interoperability Working Group
+// (DIWG)
+// Provided by: Ed Armstrong (NASA JPL)
+
+netcdf swath_GHRSST_L2P {
+   dimensions:
+       ni = 1760;
+       nj = 40000;
+       time = 1;
+
+   variables:
+        float lat(nj, ni) ;
+           lat:standard_name = "latitude" ;
+           lat:units = "degrees_north" ;
+           lat:valid_min = -90. ;
+           lat:valid_max = 90. ;
+           lat:comment = "Geographical coordinates, WGS84 datum" ;
+
+        float lon(nj, ni) ;
+           lon:standard_name = "longitude" ;
+           lon:units = "degrees_east" ;
+           lon:valid_min = -180. ;
+           lon:valid_max = 180. ;
+           lon:comment = "Geographical coordinates, WGS84 datum" ;
+
+       int time(time);
+           time:long_name = "reference time of SST file";
+           time:units = "seconds since 1981-01-01 00:00:00";
+           time:comment = "Includes leap seconds since 1981" ;
+
+       short sea_surface_temperature(time, nj, ni);
+           sea_surface_temperature:long_name = "sea surface skin temperature";
+           sea_surface_temperature:standard_name = "sea_surface_skin_temperature";
+           sea_surface_temperature:units = "kelvin";
+           sea_surface_temperature:add_offset = 290.0;
+           sea_surface_temperature:scale_factor = 1.0e-3;
+           sea_surface_temperature:valid_min = -32767s;
+           sea_surface_temperature:valid_max = 32767s;
+           sea_surface_temperature:_FillValue = -32768s;
+           sea_surface_temperature:coordinates = "lon lat";
+           sea_surface_temperature:comment = "Skin temperature of the ocean";
+
+       short sst_dtime (time, nj, ni);
+           sst_dtime:long_name = "time difference from reference time";
+           sst_dtime:units = "second";
+           sst_dtime:add_offset = 0s;
+           sst_dtime:scale_factor = 1s;
+           sst_dtime:valid_min = -32767s;
+           sst_dtime:valid_max = 32767s;
+           sst_dtime:_FillValue = -32768s;
+           sst_dtime:coordinates = "lon lat";
+           sst_dtime:comment = "Variable time plus sst_dtime gives seconds after 00:00:00 UTC January 1, 1981";
+
+       byte sses_bias (time, nj, ni);
+           sses_bias:long_name = "SSES bias estimate";
+           sses_bias:units = "kelvin";
+           sses_bias:add_offset = 0.0;
+           sses_bias:scale_factor = 0.02;
+           sses_bias:valid_min = -127b;
+           sses_bias:valid_max = 127b;
+           sses_bias:_FillValue = -128b;
+           sses_bias:coordinates = "lon lat";
+           sses_bias:comment = "Estimated bias as described at http://www.ghrsst.org/SSES-Description-of-schemes.html";
+
+       byte sses_standard_deviation (time, nj, ni);
+           sses_standard_deviation:long_name = "SSES standard deviation";
+           sses_standard_deviation:units = "kelvin";
+           sses_standard_deviation:add_offset = 1.27;
+           sses_standard_deviation:scale_factor = 0.01;
+           sses_standard_deviation:valid_min = -127b;
+           sses_standard_deviation:valid_max = 127b;
+           sses_standard_deviation:_FillValue = -128b;
+           sses_standard_deviation:coordinates = "lon lat";
+           sses_standard_deviation:comment = "Estimated standard deviation as described at http://www.ghrsst.org/SSES-Description-of-schemes.html";
+
+       byte dt_analysis (time, nj, ni);
+           dt_analysis:long_name = "deviation from SST reference climatology";
+           dt_analysis:units = "kelvin";
+           dt_analysis:add_offset = 0.;
+           dt_analysis:scale_factor = 0.1;
+           dt_analysis:valid_min = -127b;
+           dt_analysis:valid_max = 127b;
+           dt_analysis:_FillValue = -128b;
+           dt_analysis:coordinates = "lon lat";
+           dt_analysis:comment = "Reference is GHRSST L4 OSTIA";
+
+       byte wind_speed (time, nj, ni);
+           wind_speed:long_name = "10m wind speed";
+           wind_speed:standard_name = "wind_speed";
+           wind_speed:units = "m s-1";
+           wind_speed:height = "10 m";
+           wind_speed:add_offset = 25.4;
+           wind_speed:scale_factor = 0.2;
+           wind_speed:valid_min = -127b;
+           wind_speed:valid_max = 127b;
+           wind_speed:_FillValue = -128b;
+           wind_speed:coordinates = "lon lat";
+           wind_speed:sources = "ECMWF_A";
+           wind_speed:comment = "These wind speeds were created by the ECMWF and represent winds at 10 metres above the sea surface.";
+
+       byte wind_speed_dtime_from_sst (time, nj, ni);
+           wind_speed_dtime_from_sst :long_name = "time difference of wind speed measurement from sst measurement";
+           wind_speed_dtime_from_sst:units = "hour";
+           wind_speed_dtime_from_sst:add_offset = 12.7;
+           wind_speed_dtime_from_sst:scale_factor = 0.1;
+           wind_speed_dtime_from_sst:valid_min = -127b;
+           wind_speed_dtime_from_sst:valid_max = 127b;
+           wind_speed_dtime_from_sst:_FillValue = -128b;
+           wind_speed_dtime_from_sst:coordinates = "lon lat";
+           wind_speed_dtime_from_sst:comment = "The hours between the wind speed measurement and the SST observation using variable sst_dtime as the reference";
+
+       byte sea_ice_fraction(time, nj, ni);
+           sea_ice_fraction:long_name = "sea ice fraction";
+           sea_ice_fraction:standard_name = "sea_ice_area_fraction";
+           sea_ice_fraction:units = "1";
+           sea_ice_fraction:add_offset = 0.;
+           sea_ice_fraction:scale_factor = 0.01 ;
+           sea_ice_fraction:valid_min = 0b;
+           sea_ice_fraction:valid_max = 100b;
+           sea_ice_fraction:_FillValue = -128b;
+           sea_ice_fraction:coordinates = "lon lat";
+           sea_ice_fraction:sources = "ECMWF_A";
+           sea_ice_fraction:comment = "Fractional sea ice cover from the ECMWF_A ice product";
+
+       byte sea_ice_fraction_dtime_from_sst (time, nj, ni);
+           sea_ice_fraction_dtime_from_sst :long_name = "time difference of sea ice fraction measurement from sst measurement";
+           sea_ice_fraction_dtime_from_sst:units = "hour";
+           sea_ice_fraction_dtime_from_sst:add_offset = 0.;
+           sea_ice_fraction_dtime_from_sst:scale_factor = 0.1;
+           sea_ice_fraction_dtime_from_sst:valid_min = -127b;
+           sea_ice_fraction_dtime_from_sst:valid_max = 127b;
+           sea_ice_fraction_dtime_from_sst:_FillValue = -128b;
+           sea_ice_fraction_dtime_from_sst:coordinates = "lon lat";
+           sea_ice_fraction_dtime_from_sst:comment = "The hours between the sea ice measurement and the SST observation using variable sst_dtime as the reference";
+
+       byte aerosol_dynamic_indicator(time, nj, ni);
+           aerosol_dynamic_indicator:long_name = "aerosol dynamic indicator";
+           aerosol_dynamic_indicator:units = " ";
+           aerosol_dynamic_indicator:_FillValue = -128b;
+           aerosol_dynamic_indicator:add_offset = 0.;
+           aerosol_dynamic_indicator:scale_factor = 1.;
+           aerosol_dynamic_indicator:valid_min = -127b;
+           aerosol_dynamic_indicator:valid_max = 127b;
+           aerosol_dynamic_indicator:coordinates = "lon lat";
+           aerosol_dynamic_indicator:sources = "SDI";
+           aerosol_dynamic_indicator:comment = "Estimate of the potential for aerosol contamination based on the SDI product ";
+
+       byte adi_dtime_from_sst(time, nj, ni);
+           adi_dtime_from_sst:long_name = "time difference of ADI data from sst measurement";
+           adi_dtime_from_sst:units = "hour";
+           adi_dtime_from_sst:_FillValue = -128b;
+           adi_dtime_from_sst:add_offset = 0.;
+           adi_dtime_from_sst:scale_factor = 0.1;
+           adi_dtime_from_sst:valid_min = -127b;
+           adi_dtime_from_sst:valid_max = 127b;
+           adi_dtime_from_sst:coordinates = "lon lat";
+           adi_dtime_from_sst:comment = "The hours between the aerosol measurement and the SST observation using variable sst_dtime as the reference";
+
+       short l2p_flags(time, nj, ni);
+           l2p_flags:long_name = "L2P flags";
+           l2p_flags:coordinates = "lon lat";
+           l2p_flags:valid_min = 0s;
+           l2p_flags:valid_max = 65535s;
+           l2p_flags:flag_meanings = "microwave land ice lake river reserved_for_future_use no_retrieval N2_retrieval N3R_retrieval N3_retrieval D2_retrieval D3_retrieval cloud sun_glint cosmetic_fill validation";
+           l2p_flags:flag_masks = 1s, 2s, 4s, 8s, 16s, 32s, 64s, 128s, 256s,  512s, 1024s, 2048s, 4096s, 8192s, 16384s, 32768s ;
+           l2p_flags:comment = "These flags can be used to further filter data variables";
+
+        byte quality_level (time, nj, ni);
+           quality_level:long_name = "SST measurement quality" ;
+           quality_level:coordinates = "lon lat" ;
+           quality_level:_FillValue = -128b;
+           quality_level:valid_min = 0b;
+           quality_level:valid_max = 5b;
+           quality_level:flag_meanings = "no_data bad_data worst_quality low_quality acceptable_quality best_quality";
+           quality_level:flag_values = 0b, 1b, 2b, 3b, 4b, 5b;
+           quality_level:comment = " These are the overall quality indicators and are used for all GHRSST SSTs";
+
+        byte satellite_zenith_angle(time, nj, ni) ;
+           satellite_zenith_angle:long_name = "satellite zenith angle" ;
+           satellite_zenith_angle:standard_name = " zenith_angle";
+           satellite_zenith_angle:units = "angular_degree" ;
+           satellite_zenith_angle:_FillValue = -128b ;
+           satellite_zenith_angle:add_offset = 0. ;
+           satellite_zenith_angle:scale_factor = 1. ;
+           satellite_zenith_angle:valid_min = -90b ;
+           satellite_zenith_angle:valid_max = 90b ;
+           satellite_zenith_angle:coordinates = "lon lat" ;
+           satellite_zenith_angle:grid_mapping = "polar_stereographic" ;
+           satellite_zenith_angle:comment = "The satellite zenith angle at the time of the SST observations; Optional L2P field";
+
+// global attributes:
+           :Conventions = "CF-1.4";
+           :title = "SENTINEL-3A SLSTR L2P product";
+           :summary = "The L2P product for the Sentinel-3A mission.  This data set is the follow-on the ATSR-1, ATSR-2, and AATSR series of instruments dating back to 1991.";
+           :references = "http://sentinel.esa.int/handbooks/SLSTR_product_handbook.pdf";
+           :institution = "ESA";
+           :history = "processor XXX.YY";
+           :comment = "SST from Sentinel-3A";
+           :license = "These data are available free of charge under the GMES data policy.";
+           :id = "SLSTR-EUR-L2P-Sentinel3A-v1";
+           :naming_authority = "org.ghrsst";
+           :product_version = "1.0";
+           :uuid = "D7A88FA8-7421-4039-807C-B551D638EDC6";
+           :gds_version_id = "2.0";
+           :necdf_version_id = "4.1";
+           :date_created = "20100201T120000Z";
+           :file_quality_level=1;
+           :spatial_resolution = "1 km";
+           :start_time = "20100131T001223Z";
+           :time_coverage_start = "20100131T001223Z";
+           :stop_time = "20100131T001418Z";
+           :time_coverage_end = "20100131T001418Z";
+           :northernmost_latitude = 85.;
+           :sourthenmost_latitude = -85.;
+           :westernmost_longitude = -180.;
+           :easternmost_longitude = 180.;
+           :source = "S3A_SLSTR OSTIA ECMWF_A";
+           :platform = "SENTINEL_3A";
+           :sensor = "SLSTR";
+           :Metadata_Conventions = "Unidata Observation Dataset v1.0";
+           :metadata_link = "http://data.nodc.noaa.gov/waf/FGDC-GHRSST_all-SLSTR-EUR-L2P-Sentinel3A-v1.html";
+           :keywords = "Oceans > Ocean Temperature > Sea Surface Temperature";
+           :keywords_vocabulary = "NASA Global Change Master Directory (GCMD) Science Keywords";
+           :standard_name_vocabulary = "NetCDF Climate and Forecast (CF) Metadata Convention";
+           :geospatial_lat_units = "degrees north";
+           :geospatial_lat_resolution = "0.01";
+           :geospatial_lon_units = "degrees east";
+           :geospatial_lon_resolution = "0.01";
+           :acknowledgment = "Please acknowledge the use of these data with the following statement: These data were provided by GHRSST and its European Regional Data Assembly Center";
+           :creator_name = "European Space Agency";
+           :creator_email ="eohelp@esa.int";
+           :creator_url = "http://sentinel.esa.int";
+           :project = "Group for High Resolution SST";
+           :publisher_name = "GHRSST Project Office";
+           :publisher_url ="http://www.ghrsst.org";
+           :publisher_email ="ghrsst-po@nceo.ac.uk";
+           :processing_level = "L2P";
+           :cdm_data_type = "swath";
+}
