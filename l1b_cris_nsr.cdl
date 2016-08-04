@@ -1,0 +1,552 @@
+// Contributed by Evan Manning <Evan.M.Manning AT jpl DOT nasa DOT gov>
+
+netcdf l1b_cris_nsr  {
+dimensions:
+     spatial = 3;  // directions: x, y, z
+     fov_poly = 8;  // lat/lon points defining the ploygon bounding an fov (anticlockwise as viewed from above)
+     utc_tuple = 8;  // parts of UTC time
+     attitude = 3;  // roll, pitch, yaw
+     atrack = 45;  // along-track spatial dimension
+     xtrack = 30;  // cross-track spatial dimension
+     fov = 9;  // Field-of-view dimension
+     chan_lw = 717;  // longwave IR channel number
+     chan_mw = 437;  // midwave IR channel number
+     chan_sw = 163;  // shortwave IR channel number
+
+variables:
+         string obs_id(atrack, xtrack);
+              string obs_id:units="1";
+              string obs_id:long_name="earth view observation id for FOR";
+              string obs_id:description="unique earth view observation identifier: yyyymmddThhmm.aaExx.  Includes gran_id plus 2-digit along-track index (1-45) and 2-digit cross-track index (1-30).";
+              string obs_id:coverage_content_type="referenceInformation";
+
+         string fov_obs_id(atrack, xtrack, fov);
+              string fov_obs_id:units="1";
+              string fov_obs_id:long_name="earth view observation id for FOV";
+              string fov_obs_id:description="unique earth view observation identifier for FOV: yyyymmddThhmm.aaExx.f .  Includes gran_id plus 2-digit along-track index (1-45), 2-digit cross-track index (1-30), and 1-digit FOV number (1-9).";
+              string fov_obs_id:coverage_content_type="referenceInformation";
+
+          ubyte instrument_state(atrack, xtrack, fov);
+              string instrument_state:units="1";
+              string instrument_state:long_name="instrument state";
+              string instrument_state:coordinates="lon lat";
+              string instrument_state:description="instrument/data state: 0/'Process' - Data is usable for science; 1/'Special' - Observations are valid but instrument is not configured for science data (ex: stare mode); 2/'Erroneous' - Data is not usable (ex: checksum error); 3/'Missing' - No data was received.";
+               ubyte instrument_state:_FillValue=255ub;
+              string instrument_state:coverage_content_type="qualityInformation";
+              string instrument_state:flag_meanings="Process Special Erroneous Missing";
+               ubyte instrument_state:flag_values=0,  1,  2,  3;
+
+         double obs_time_tai(atrack, xtrack);
+              string obs_time_tai:units="seconds since 1993-01-01 00:00";
+              double obs_time_tai:valid_range=-2934835217.0,  3376598409.0;
+              string obs_time_tai:long_name="earth view FOV midtime";
+              string obs_time_tai:standard_name="time";
+              string obs_time_tai:description="earth view observation midtime for each FOV";
+              double obs_time_tai:_FillValue=9.9692099683868690e+36;
+              string obs_time_tai:coverage_content_type="referenceInformation";
+
+         ushort obs_time_utc(atrack, xtrack, utc_tuple);
+              string obs_time_utc:units="1";
+              string obs_time_utc:long_name="earth view UTC FOV time";
+              string obs_time_utc:coordinates="utc_tuple_lbl";
+              string obs_time_utc:description="UTC earth view observation time as an array of integers: year, month, day, hour, minute, second, millisec, microsec";
+              ushort obs_time_utc:_FillValue= 65535us;
+              string obs_time_utc:coverage_content_type="referenceInformation";
+
+          float lat(atrack, xtrack, fov);
+              string lat:units="degrees_north";
+               float lat:valid_range=-90.0,  90.0;
+              string lat:long_name="latitude";
+              string lat:standard_name="latitude";
+              string lat:description="latitude of FOV center";
+               float lat:_FillValue=9.9692099683868690e+36f;
+              string lat:coverage_content_type="referenceInformation";
+              string lat:bounds="lat_bnds";
+
+          float lat_geoid(atrack, xtrack, fov);
+              string lat_geoid:units="degrees_north";
+               float lat_geoid:valid_range=-90.0,  90.0;
+              string lat_geoid:long_name="latitude";
+              string lat_geoid:standard_name="latitude";
+              string lat_geoid:description="latitude of FOV center on the geoid (without terrain correction)";
+               float lat_geoid:_FillValue=9.9692099683868690e+36f;
+              string lat_geoid:coverage_content_type="referenceInformation";
+
+          float lon(atrack, xtrack, fov);
+              string lon:units="degrees_east";
+               float lon:valid_range=-180.0,  180.0;
+              string lon:long_name="longitude";
+              string lon:standard_name="longitude";
+              string lon:description="longitude of FOV center";
+               float lon:_FillValue=9.9692099683868690e+36f;
+              string lon:coverage_content_type="referenceInformation";
+              string lon:bounds="lon_bnds";
+
+          float lon_geoid(atrack, xtrack, fov);
+              string lon_geoid:units="degrees_east";
+               float lon_geoid:valid_range=-180.0,  180.0;
+              string lon_geoid:long_name="longitude";
+              string lon_geoid:standard_name="longitude";
+              string lon_geoid:description="longitude of FOV center on the geoid (without terrain correction)";
+               float lon_geoid:_FillValue=9.9692099683868690e+36f;
+              string lon_geoid:coverage_content_type="referenceInformation";
+
+          float lat_bnds(atrack, xtrack, fov, fov_poly);
+              string lat_bnds:units="degrees_north";
+               float lat_bnds:valid_range=-90.0,  90.0;
+              string lat_bnds:long_name="FOV boundary latitudes";
+              string lat_bnds:description="latitudes of points forming a polygon around the perimeter of the FOV";
+               float lat_bnds:_FillValue=9.9692099683868690e+36f;
+              string lat_bnds:coverage_content_type="referenceInformation";
+
+          float lon_bnds(atrack, xtrack, fov, fov_poly);
+              string lon_bnds:units="degrees_east";
+               float lon_bnds:valid_range=-180.0,  180.0;
+              string lon_bnds:long_name="FOV boundary longitudes";
+              string lon_bnds:description="longitudes of points forming a polygon around the perimeter of the FOV";
+               float lon_bnds:_FillValue=9.9692099683868690e+36f;
+              string lon_bnds:coverage_content_type="referenceInformation";
+
+          float land_frac(atrack, xtrack, fov);
+              string land_frac:units="1";
+               float land_frac:valid_range=0.0,  1.0;
+              string land_frac:long_name="land fraction";
+              string land_frac:standard_name="land_area_fraction";
+              string land_frac:coordinates="lon lat";
+              string land_frac:description="land fraction over the FOV";
+               float land_frac:_FillValue=9.9692099683868690e+36f;
+              string land_frac:coverage_content_type="referenceInformation";
+              string land_frac:cell_methods="area: mean (beam-weighted)";
+
+          float surf_alt(atrack, xtrack, fov);
+              string surf_alt:units="m";
+              string surf_alt:ancillary_variables="surf_alt_sdev";
+               float surf_alt:valid_range=-500.0,  10000.0;
+              string surf_alt:long_name="surface altitude";
+              string surf_alt:standard_name="surface_altitude";
+              string surf_alt:coordinates="lon lat";
+              string surf_alt:description="mean surface altitude wrt  earth model over the FOV";
+               float surf_alt:_FillValue=9.9692099683868690e+36f;
+              string surf_alt:coverage_content_type="referenceInformation";
+              string surf_alt:cell_methods="area: mean (beam-weighted)";
+
+          float surf_alt_sdev(atrack, xtrack, fov);
+              string surf_alt_sdev:units="m";
+               float surf_alt_sdev:valid_range=0.0,  10000.0;
+              string surf_alt_sdev:long_name="surface altitude standard deviation";
+              string surf_alt_sdev:coordinates="lon lat";
+              string surf_alt_sdev:description="standard deviation of surface altitude within the FOV";
+               float surf_alt_sdev:_FillValue=9.9692099683868690e+36f;
+              string surf_alt_sdev:coverage_content_type="qualityInformation";
+              string surf_alt_sdev:cell_methods="area: standard_deviation (beam-weighted)";
+
+          float sun_glint_lat(atrack);
+              string sun_glint_lat:units="degrees_north";
+               float sun_glint_lat:valid_range=-90.0,  90.0;
+              string sun_glint_lat:long_name="sun glint latitude";
+              string sun_glint_lat:standard_name="latitude";
+              string sun_glint_lat:coordinates="subsat_lon subsat_lat";
+              string sun_glint_lat:description="sun glint spot latitude at scan_mid_time.  Fill for night observations.";
+               float sun_glint_lat:_FillValue=9.9692099683868690e+36f;
+              string sun_glint_lat:coverage_content_type="referenceInformation";
+
+          float sun_glint_lon(atrack);
+              string sun_glint_lon:units="degrees_east";
+               float sun_glint_lon:valid_range=-180.0,  180.0;
+              string sun_glint_lon:long_name="sun glint longitude";
+              string sun_glint_lon:standard_name="longitude";
+              string sun_glint_lon:coordinates="subsat_lon subsat_lat";
+              string sun_glint_lon:description="sun glint spot longitude at scan_mid_time.  Fill for night observations.";
+               float sun_glint_lon:_FillValue=9.9692099683868690e+36f;
+              string sun_glint_lon:coverage_content_type="referenceInformation";
+
+          float sol_zen(atrack, xtrack, fov);
+              string sol_zen:units="degree";
+               float sol_zen:valid_range=0.0,  180.0;
+              string sol_zen:long_name="solar zenith angle";
+              string sol_zen:standard_name="solar_zenith_angle";
+              string sol_zen:coordinates="lon lat";
+              string sol_zen:description="solar zenith angle at the center of the FOV";
+               float sol_zen:_FillValue=9.9692099683868690e+36f;
+              string sol_zen:coverage_content_type="referenceInformation";
+
+          float sol_azi(atrack, xtrack, fov);
+              string sol_azi:units="degree";
+               float sol_azi:valid_range=0.0,  360.0;
+              string sol_azi:long_name="solar azimuth angle";
+              string sol_azi:standard_name="solar_azimuth_angle";
+              string sol_azi:coordinates="lon lat";
+              string sol_azi:description="solar azimuth angle at the center of the FOV";
+               float sol_azi:_FillValue=9.9692099683868690e+36f;
+              string sol_azi:coverage_content_type="referenceInformation";
+
+          float sun_glint_dist(atrack, xtrack, fov);
+              string sun_glint_dist:units="m";
+               float sun_glint_dist:valid_range=0.0,  30000.0;
+              string sun_glint_dist:long_name="sun glint distance";
+              string sun_glint_dist:coordinates="lon lat";
+              string sun_glint_dist:description="distance of sun glint spot to the center of the FOV";
+               float sun_glint_dist:_FillValue=9.9692099683868690e+36f;
+              string sun_glint_dist:coverage_content_type="referenceInformation";
+
+          float view_ang(atrack, xtrack, fov);
+              string view_ang:units="degree";
+               float view_ang:valid_range=0.0,  180.0;
+              string view_ang:long_name="view angle";
+              string view_ang:standard_name="sensor_view_angle";
+              string view_ang:coordinates="lon lat";
+              string view_ang:description="off nadir pointing angle";
+               float view_ang:_FillValue=9.9692099683868690e+36f;
+              string view_ang:coverage_content_type="referenceInformation";
+
+          float sat_zen(atrack, xtrack, fov);
+              string sat_zen:units="degree";
+               float sat_zen:valid_range=0.0,  180.0;
+              string sat_zen:long_name="satellite zenith angle";
+              string sat_zen:standard_name="sensor_zenith_angle";
+              string sat_zen:coordinates="lon lat";
+              string sat_zen:description="satellite zenith angle at the center of the FOV";
+               float sat_zen:_FillValue=9.9692099683868690e+36f;
+              string sat_zen:coverage_content_type="referenceInformation";
+
+          float sat_azi(atrack, xtrack, fov);
+              string sat_azi:units="degree";
+               float sat_azi:valid_range=0.0,  360.0;
+              string sat_azi:long_name="satellite azimuth angle";
+              string sat_azi:standard_name="sensor_azimuth_angle";
+              string sat_azi:coordinates="lon lat";
+              string sat_azi:description="satellite azimuth angle at the center of the FOV";
+               float sat_azi:_FillValue=9.9692099683868690e+36f;
+              string sat_azi:coverage_content_type="referenceInformation";
+
+          float sat_range(atrack, xtrack, fov);
+              string sat_range:units="m";
+               float sat_range:valid_range=1.0e5,  1.0e7;
+              string sat_range:long_name="satellite range";
+              string sat_range:coordinates="lon lat";
+              string sat_range:description="line of sight distance between satellite and FOV center";
+               float sat_range:_FillValue=9.9692099683868690e+36f;
+              string sat_range:coverage_content_type="referenceInformation";
+
+          ubyte asc_flag(atrack);
+              string asc_flag:units="1";
+               ubyte asc_flag:valid_range=0,  1;
+              string asc_flag:long_name="ascending orbit flag";
+              string asc_flag:coordinates="subsat_lon subsat_lat";
+              string asc_flag:description="ascending orbit flag: 1 if ascending, 0 descending";
+               ubyte asc_flag:_FillValue=255ub;
+              string asc_flag:coverage_content_type="referenceInformation";
+              string asc_flag:flag_meanings="descending ascending";
+               ubyte asc_flag:flag_values=0,  1;
+
+          float subsat_lat(atrack);  // standard_name platform_latitude is under review for a future CF version
+              string subsat_lat:units="degrees_north";
+               float subsat_lat:valid_range=-90.0,  90.0;
+              string subsat_lat:long_name="sub-satellite latitude";
+              string subsat_lat:standard_name="latitude";
+              string subsat_lat:description="sub-satellite latitude at scan_mid_time";
+               float subsat_lat:_FillValue=9.9692099683868690e+36f;
+              string subsat_lat:coverage_content_type="referenceInformation";
+
+          float subsat_lon(atrack);  // standard_name platform_longitude is under review for a future CF version
+              string subsat_lon:units="degrees_east";
+               float subsat_lon:valid_range=-180.0,  180.0;
+              string subsat_lon:long_name="sub-satellite longitude";
+              string subsat_lon:standard_name="longitude";
+              string subsat_lon:description="sub-satellite longitude at scan_mid_time";
+               float subsat_lon:_FillValue=9.9692099683868690e+36f;
+              string subsat_lon:coverage_content_type="referenceInformation";
+
+         double scan_mid_time(atrack);
+              string scan_mid_time:units="seconds since 1993-01-01 00:00";
+              double scan_mid_time:valid_range=-2934835217.0,  3376598409.0;
+              string scan_mid_time:long_name="midscan TAI93";
+              string scan_mid_time:standard_name="time";
+              string scan_mid_time:coordinates="subsat_lon subsat_lat";
+              string scan_mid_time:description="TAI93 at  middle of earth scene scans";
+              double scan_mid_time:_FillValue=9.9692099683868690e+36;
+              string scan_mid_time:coverage_content_type="referenceInformation";
+
+          float sat_alt(atrack);  // standard_name platform_altitude is under review for a future CF version
+              string sat_alt:units="m";
+               float sat_alt:valid_range=1.0e5,  1.0e6;
+              string sat_alt:long_name="satellite altitude";
+              string sat_alt:standard_name="altitude";
+              string sat_alt:coordinates="subsat_lon subsat_lat";
+              string sat_alt:description="satellite altitude with respect to earth model at scan_mid_time";
+               float sat_alt:_FillValue=9.9692099683868690e+36f;
+              string sat_alt:coverage_content_type="referenceInformation";
+
+          float sat_pos(atrack, spatial);
+              string sat_pos:units="m";
+              string sat_pos:long_name="satellite position";
+              string sat_pos:coordinates="subsat_lon subsat_lat spatial_lbl";
+              string sat_pos:description="satellite ECR position at scan_mid_time";
+               float sat_pos:_FillValue=9.9692099683868690e+36f;
+              string sat_pos:coverage_content_type="referenceInformation";
+
+          float sat_vel(atrack, spatial);
+              string sat_vel:units="m s-1";
+              string sat_vel:long_name="satellite velocity";
+              string sat_vel:coordinates="subsat_lon subsat_lat spatial_lbl";
+              string sat_vel:description="satellite ECR velocity at scan_mid_time";
+               float sat_vel:_FillValue=9.9692099683868690e+36f;
+              string sat_vel:coverage_content_type="referenceInformation";
+
+          float sat_att(atrack, attitude);
+              string sat_att:units="degree";
+               float sat_att:valid_range=-180.0,  180.0;
+              string sat_att:long_name="satellite attitude";
+              string sat_att:coordinates="subsat_lon subsat_lat angular_lbl";
+              string sat_att:description="satellite attitude at scan_mid_time.  An orthogonal triad.  First element is angle about the +x (roll) ORB axis.  +x axis is positively oriented in the direction of orbital flight.  Second element is angle about +y (pitch) ORB axis.  +y axis is oriented normal to the orbit plane with the positive sense opposite to that of the orbit's angular momentum vector H.  Third element is angle about +z (yaw) axis.  +z axis is positively oriented Earthward parallel to the satellite radius vector R from the spacecraft center of mass to the center of the Earth.";
+               float sat_att:_FillValue=9.9692099683868690e+36f;
+              string sat_att:coverage_content_type="referenceInformation";
+
+         string attitude_lbl(attitude);
+              string attitude_lbl:long_name="rotational direction";
+              string attitude_lbl:description="list of rotational directions (roll, pitch, yaw)";
+              string attitude_lbl:coverage_content_type="auxillaryInformation";
+
+         string spatial_lbl(spatial);
+              string spatial_lbl:long_name="spatial direction";
+              string spatial_lbl:description="list of spatial directions (X, Y, Z)";
+              string spatial_lbl:coverage_content_type="auxillaryInformation";
+
+         string utc_tuple_lbl(utc_tuple);
+              string utc_tuple_lbl:long_name="UTC date/time parts";
+              string utc_tuple_lbl:description="names of the elements of UTC when it is expressed as an array of integers year,month,day,hour,minute,second,millisecond,microsecond";
+              string utc_tuple_lbl:coverage_content_type="auxillaryInformation";
+
+          float rad_lw(atrack, xtrack, fov, chan_lw);
+              string rad_lw:units="mW/(m2 sr cm-1)";
+              string rad_lw:long_name="longwave real spectral radiance";
+              string rad_lw:standard_name="toa_outgoing_radiance_per_unit_wavenumber";
+              string rad_lw:coordinates="lon lat";
+              string rad_lw:description="longwave real spectral radiance";
+               float rad_lw:_FillValue=9.9692099683868690e+36f;
+              string rad_lw:coverage_content_type="physicalMeasurement";
+
+          float rad_mw(atrack, xtrack, fov, chan_mw);
+              string rad_mw:units="mW/(m2 sr cm-1)";
+              string rad_mw:long_name="midwave real spectral radiance";
+              string rad_mw:standard_name="toa_outgoing_radiance_per_unit_wavenumber";
+              string rad_mw:coordinates="lon lat";
+              string rad_mw:description="midwave real spectral radiance";
+               float rad_mw:_FillValue=9.9692099683868690e+36f;
+              string rad_mw:coverage_content_type="physicalMeasurement";
+
+          float rad_sw(atrack, xtrack, fov, chan_sw);
+              string rad_sw:units="mW/(m2 sr cm-1)";
+              string rad_sw:long_name="shortwave real spectral radiance";
+              string rad_sw:standard_name="toa_outgoing_radiance_per_unit_wavenumber";
+              string rad_sw:coordinates="lon lat";
+              string rad_sw:description="shortwave real spectral radiance";
+               float rad_sw:_FillValue=9.9692099683868690e+36f;
+              string rad_sw:coverage_content_type="physicalMeasurement";
+
+          int64 l1b_qual(atrack, xtrack, fov);
+              string l1b_qual:units="1";
+               int64 l1b_qual:valid_range=-9223372036854775808,  9223372036854775806;
+              string l1b_qual:long_name="L1B quality flags";
+              string l1b_qual:coordinates="lon lat";
+              string l1b_qual:description="per-observation L1B product quality";
+               int64 l1b_qual:_FillValue=-1l;
+              string l1b_qual:coverage_content_type="qualityInformation";
+              string l1b_qual:flag_meanings="lw_quality_degraded lw_quality_invalid mw_quality_degraded mw_quality_invalid sw_quality_degraded sw_quality_invalid lw_imag_rad_anomaly mw_imag_rad_anomaly sw_imag_rad_anomaly l1a_lw_missing_es l1a_mw_missing_es l1a_sw_missing_es l1a_bit_trim_mismatch l1a_eight_sec_missing";
+               int64 l1b_qual:flag_masks=3,  3,  12,  12,
+                                                    48,  48,  524288,  1048576,
+                                                    2097152,  281474976710656,  562949953421312,  1125899906842624,
+                                                    2251799813685248,  4503599627370496;
+               int64 l1b_qual:flag_values=1,  2,  4,  8,
+                                                     16,  32,  524288,  1048576,
+                                                     2097152,  281474976710656,  562949953421312,  1125899906842624,
+                                                     2251799813685248,  4503599627370496;
+
+          int64 geo_qual(atrack, xtrack, fov);
+              string geo_qual:units="1";
+               int64 geo_qual:valid_range=-9223372036854775808,  9223372036854775806;
+              string geo_qual:long_name="geolocation quality flags";
+              string geo_qual:coordinates="lon lat";
+              string geo_qual:description="per-observation L1B geolocation quality";
+               int64 geo_qual:_FillValue=-1l;
+              string geo_qual:coverage_content_type="qualityInformation";
+              string geo_qual:flag_meanings="obs_time_missing servo_error_missing scd_gap_sm scd_gap_md scd_gap_lg stale_utcpole";
+               int64 geo_qual:flag_masks=1,  2,  12,  12,  12,  16;
+               int64 geo_qual:flag_values=1,  2,  4,  8,  12,  16;
+
+          float nedn_lw(fov, chan_lw);
+              string nedn_lw:units="mW/(m2 sr cm-1)";
+              string nedn_lw:long_name="longwave noise equivalent differential radiance";
+              string nedn_lw:description="longwave noise equivalent differential radiance";
+               float nedn_lw:_FillValue=9.9692099683868690e+36f;
+              string nedn_lw:coverage_content_type="qualityInformation";
+
+          float nedn_mw(fov, chan_mw);
+              string nedn_mw:units="mW/(m2 sr cm-1)";
+              string nedn_mw:long_name="midwave noise equivalent differential radiance";
+              string nedn_mw:description="midwave noise equivalent differential radiance";
+               float nedn_mw:_FillValue=9.9692099683868690e+36f;
+              string nedn_mw:coverage_content_type="qualityInformation";
+
+          float nedn_sw(fov, chan_sw);
+              string nedn_sw:units="mW/(m2 sr cm-1)";
+              string nedn_sw:long_name="shortwave noise equivalent differential radiance";
+              string nedn_sw:description="shortwave noise equivalent differential radiance";
+               float nedn_sw:_FillValue=9.9692099683868690e+36f;
+              string nedn_sw:coverage_content_type="qualityInformation";
+
+          ubyte scan_sweep_dir(xtrack);
+              string scan_sweep_dir:units="1";
+               ubyte scan_sweep_dir:valid_range=0, 1;
+              string scan_sweep_dir:long_name="sweep direction of FOVs within a scan";
+              string scan_sweep_dir:description="sweep direction of FOVs within a scan";
+               ubyte scan_sweep_dir:_FillValue=255ub;
+              string scan_sweep_dir:coverage_content_type="auxillaryInformation";
+              string scan_sweep_dir:flag_meanings="forward reverse";
+               ubyte scan_sweep_dir:flag_values=0,  1;
+
+          ubyte for_num(xtrack);
+              string for_num:units="1";
+               ubyte for_num:valid_range=1, 30;
+              string for_num:long_name="field of regard number";
+              string for_num:description="field of regard number";
+               ubyte for_num:_FillValue=255ub;
+              string for_num:coverage_content_type="auxillaryInformation";
+
+          ubyte fov_num(fov);
+              string fov_num:units="1";
+               ubyte fov_num:valid_range=1, 9;
+              string fov_num:long_name="field of view number";
+              string fov_num:description="field of view number";
+               ubyte fov_num:_FillValue=255ub;
+              string fov_num:coverage_content_type="auxillaryInformation";
+
+         double wnum_lw(chan_lw);
+              string wnum_lw:units="cm-1";
+              double wnum_lw:valid_range=648.75,  1096.25;
+              string wnum_lw:long_name="longwave wavenumber";
+              string wnum_lw:standard_name="sensor_band_central_radiation_wavenumber";
+              string wnum_lw:description="longwave wavenumber";
+              double wnum_lw:_FillValue=9.9692099683868690e+36;
+              string wnum_lw:coverage_content_type="auxillaryInformation";
+
+         double wnum_mw(chan_mw);
+              string wnum_mw:units="cm-1";
+              double wnum_mw:valid_range=1207.5,  1752.5;
+              string wnum_mw:long_name="midwave wavenumber";
+              string wnum_mw:standard_name="sensor_band_central_radiation_wavenumber";
+              string wnum_mw:description="midwave wavenumber";
+              double wnum_mw:_FillValue=9.9692099683868690e+36;
+              string wnum_mw:coverage_content_type="auxillaryInformation";
+
+         double wnum_sw(chan_sw);
+              string wnum_sw:units="cm-1";
+              double wnum_sw:valid_range=2150.0,  2555.0;
+              string wnum_sw:long_name="shortwave wavenumber";
+              string wnum_sw:standard_name="sensor_band_central_radiation_wavenumber";
+              string wnum_sw:description="shortwave wavenumber";
+              double wnum_sw:_FillValue=9.9692099683868690e+36;
+              string wnum_sw:coverage_content_type="auxillaryInformation";
+
+     group: aux  {
+     variables:
+               float rad_imag_lw(atrack, xtrack, fov, chan_lw);
+                   string rad_imag_lw:units="mW/(m2 sr cm-1)";
+                   string rad_imag_lw:long_name="longwave imaginary spectral radiance";
+                   string rad_imag_lw:standard_name="toa_outgoing_radiance_per_unit_wavenumber";
+                   string rad_imag_lw:coordinates="lon lat";
+                   string rad_imag_lw:description="longwave imaginary spectral radiance";
+                    float rad_imag_lw:_FillValue=9.9692099683868690e+36f;
+                   string rad_imag_lw:coverage_content_type="qualityInformation";
+
+               float rad_imag_mw(atrack, xtrack, fov, chan_mw);
+                   string rad_imag_mw:units="mW/(m2 sr cm-1)";
+                   string rad_imag_mw:long_name="midwave imaginary spectral radiance";
+                   string rad_imag_mw:standard_name="toa_outgoing_radiance_per_unit_wavenumber";
+                   string rad_imag_mw:coordinates="lon lat";
+                   string rad_imag_mw:description="midwave imaginary spectral radiance";
+                    float rad_imag_mw:_FillValue=9.9692099683868690e+36f;
+                   string rad_imag_mw:coverage_content_type="qualityInformation";
+
+               float rad_imag_sw(atrack, xtrack, fov, chan_sw);
+                   string rad_imag_sw:units="mW/(m2 sr cm-1)";
+                   string rad_imag_sw:long_name="shortwave imaginary spectral radiance";
+                   string rad_imag_sw:standard_name="toa_outgoing_radiance_per_unit_wavenumber";
+                   string rad_imag_sw:coordinates="lon lat";
+                   string rad_imag_sw:description="shortwave imaginary spectral radiance";
+                    float rad_imag_sw:_FillValue=9.9692099683868690e+36f;
+                   string rad_imag_sw:coverage_content_type="qualityInformation";
+
+              double max_opd_lw;
+                   string max_opd_lw:units="cm";
+                   string max_opd_lw:long_name="maximum longwave optical path difference";
+                   string max_opd_lw:description="maximum longwave optical path difference";
+                   double max_opd_lw:_FillValue=9.9692099683868690e+36;
+                   string max_opd_lw:coverage_content_type="qualityInformation";
+
+              double max_opd_mw;
+                   string max_opd_mw:units="cm";
+                   string max_opd_mw:long_name="maximum midwave optical path difference";
+                   string max_opd_mw:description="maximum midwave optical path difference";
+                   double max_opd_mw:_FillValue=9.9692099683868690e+36;
+                   string max_opd_mw:coverage_content_type="qualityInformation";
+
+              double max_opd_sw;
+                   string max_opd_sw:units="cm";
+                   string max_opd_sw:long_name="maximum shortwave optical path difference";
+                   string max_opd_sw:description="maximum shortwave optical path difference";
+                   double max_opd_sw:_FillValue=9.9692099683868690e+36;
+                   string max_opd_sw:coverage_content_type="qualityInformation";
+
+               short spectral_fold_point_lw;
+                   string spectral_fold_point_lw:units="1";
+                   string spectral_fold_point_lw:long_name="longwave spectral folding index";
+                   string spectral_fold_point_lw:description="one-based index for unfolding uncalibrated longwave spectrum into ascending wavenumbers";
+                    short spectral_fold_point_lw:_FillValue=-32767s;
+                   string spectral_fold_point_lw:coverage_content_type="auxillaryInformation";
+
+               short spectral_fold_point_mw;
+                   string spectral_fold_point_mw:units="1";
+                   string spectral_fold_point_mw:long_name="midwave spectral folding index";
+                   string spectral_fold_point_mw:description="one-based index for unfolding uncalibrated midwave spectrum into ascending wavenumbers";
+                    short spectral_fold_point_mw:_FillValue=-32767s;
+                   string spectral_fold_point_mw:coverage_content_type="auxillaryInformation";
+
+               short spectral_fold_point_sw;
+                   string spectral_fold_point_sw:units="1";
+                   string spectral_fold_point_sw:long_name="shortwave spectral folding index";
+                   string spectral_fold_point_sw:description="one-based index for unfolding uncalibrated shortwave spectrum into ascending wavenumbers";
+                    short spectral_fold_point_sw:_FillValue=-32767s;
+                   string spectral_fold_point_sw:coverage_content_type="auxillaryInformation";
+
+              double measured_laser_wlen;
+                   string measured_laser_wlen:units="nm";
+                   double measured_laser_wlen:valid_range=695.0,  850.0;
+                   string measured_laser_wlen:long_name="measured metrology laser half-wavelengths";
+                   string measured_laser_wlen:description="measured metrology laser half-wavelengths";
+                   double measured_laser_wlen:_FillValue=9.9692099683868690e+36;
+                   string measured_laser_wlen:coverage_content_type="qualityInformation";
+
+              double smoothed_laser_wlen;
+                   string smoothed_laser_wlen:units="nm";
+                   string smoothed_laser_wlen:long_name="smoothed metrology laser half-wavelengths";
+                   string smoothed_laser_wlen:description="smoothed metrology laser half-wavelengths";
+                   double smoothed_laser_wlen:_FillValue=9.9692099683868690e+36;
+                   string smoothed_laser_wlen:coverage_content_type="qualityInformation";
+
+              double smoothed_neon_wlen;
+                   string smoothed_neon_wlen:units="nm";
+                   string smoothed_neon_wlen:long_name="smoothed neon laser half-wavelengths";
+                   string smoothed_neon_wlen:description="smoothed neon laser half-wavelengths";
+                   double smoothed_neon_wlen:_FillValue=9.9692099683868690e+36;
+                   string smoothed_neon_wlen:coverage_content_type="qualityInformation";
+
+              double neon_wlen;
+                   string neon_wlen:units="nm";
+                   string neon_wlen:long_name="neon laser half-wavelengths";
+                   string neon_wlen:description="neon laser half-wavelengths";
+                   double neon_wlen:_FillValue=9.9692099683868690e+36;
+                   string neon_wlen:coverage_content_type="qualityInformation";
+
+     } // aux
+} // l1b_cris_nsr

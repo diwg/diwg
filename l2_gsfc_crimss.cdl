@@ -1,0 +1,1516 @@
+// Contributed by Evan Manning <Evan.M.Manning AT jpl DOT nasa DOT gov>
+
+netcdf l2_gsfc_crimss  {
+dimensions:
+     spatial = 3;  // directions: x, y, z
+     fov_poly = 8;  // lat/lon points defining the ploygon bounding an fov (anticlockwise as viewed from above)
+     utc_tuple = 8;  // parts of UTC time
+     attitude = 3;  // roll, pitch, yaw
+     fov = 9;  // Field-of-view dimension
+     atrack = 45;  // along-track spatial dimension
+     xtrack = 30;  // cross-track spatial dimension
+     lev_100 = 100;  // Fine atmospheric pressure levels
+     lay_100 = 100;  // Fine atmospheric pressure layers
+     surf_freq_ir = 100;  // Surface emissivity hinge points
+     olr_freq = 16;  // frequency bands for spectrally decomposed outgoing longwave radiation
+     mxcld = 2;  // Maximum number of cloud layers measured
+     bnds_1d = 2;  // Boundaries for 1-d fields like lay_100: min, max
+
+variables:
+         string obs_id(atrack, xtrack);
+              string obs_id:units="1";
+              string obs_id:long_name="earth view observation id for FOR";
+              string obs_id:description="unique earth view observation identifier: yyyymmddThhmm.aaExx.  Includes gran_id plus 2-digit along-track index (1-45) and 2-digit cross-track index (1-30).";
+              string obs_id:coverage_content_type="referenceInformation";
+
+         string fov_obs_id(atrack, xtrack, fov);
+              string fov_obs_id:units="1";
+              string fov_obs_id:long_name="earth view observation id for FOV";
+              string fov_obs_id:description="unique earth view observation identifier for FOV: yyyymmddThhmm.aaExx.f .  Includes gran_id plus 2-digit along-track index (1-45), 2-digit cross-track index (1-30), and 1-digit FOV number (1-9).";
+              string fov_obs_id:coverage_content_type="referenceInformation";
+
+         double obs_time_tai(atrack, xtrack);
+              string obs_time_tai:units="seconds since 1993-01-01 00:00";
+              double obs_time_tai:valid_range=-2934835217.0,  3376598409.0;
+              string obs_time_tai:long_name="earth view FOV midtime";
+              string obs_time_tai:standard_name="time";
+              string obs_time_tai:description="earth view observation midtime for each FOV";
+              double obs_time_tai:_FillValue=9.9692099683868690e+36;
+              string obs_time_tai:coverage_content_type="referenceInformation";
+
+         ushort obs_time_utc(atrack, xtrack, utc_tuple);
+              string obs_time_utc:units="1";
+              string obs_time_utc:long_name="earth view UTC FOV time";
+              string obs_time_utc:coordinates="utc_tuple_lbl";
+              string obs_time_utc:description="UTC earth view observation time as an array of integers: year, month, day, hour, minute, second, millisec, microsec";
+              ushort obs_time_utc:_FillValue= 65535us;
+              string obs_time_utc:coverage_content_type="referenceInformation";
+
+          float lat(atrack, xtrack);
+              string lat:units="degrees_north";
+               float lat:valid_range=-90.0,  90.0;
+              string lat:long_name="FOR latitude";
+              string lat:standard_name="latitude";
+              string lat:description="latitude of FOR center";
+               float lat:_FillValue=9.9692099683868690e+36f;
+              string lat:coverage_content_type="referenceInformation";
+              string lat:bounds="lat_bnds";
+
+          float lat_geoid(atrack, xtrack);
+              string lat_geoid:units="degrees_north";
+               float lat_geoid:valid_range=-90.0,  90.0;
+              string lat_geoid:long_name="FOR latitude";
+              string lat_geoid:standard_name="latitude";
+              string lat_geoid:description="latitude of FOR center on the geoid (without terrain correction)";
+               float lat_geoid:_FillValue=9.9692099683868690e+36f;
+              string lat_geoid:coverage_content_type="referenceInformation";
+
+          float fov_lat(atrack, xtrack, fov);
+              string fov_lat:units="degrees_north";
+               float fov_lat:valid_range=-90.0,  90.0;
+              string fov_lat:long_name="FOV latitude";
+              string fov_lat:standard_name="latitude";
+              string fov_lat:description="latitude of FOV center";
+               float fov_lat:_FillValue=9.9692099683868690e+36f;
+              string fov_lat:coverage_content_type="referenceInformation";
+
+          float lon(atrack, xtrack);
+              string lon:units="degrees_east";
+               float lon:valid_range=-180.0,  180.0;
+              string lon:long_name="FOR longitude";
+              string lon:standard_name="longitude";
+              string lon:description="longitude of FOR center";
+               float lon:_FillValue=9.9692099683868690e+36f;
+              string lon:coverage_content_type="referenceInformation";
+              string lon:bounds="lon_bnds";
+
+          float lon_geoid(atrack, xtrack);
+              string lon_geoid:units="degrees_east";
+               float lon_geoid:valid_range=-180.0,  180.0;
+              string lon_geoid:long_name="FOR longitude";
+              string lon_geoid:standard_name="longitude";
+              string lon_geoid:description="longitude of FOR center on the geoid (without terrain correction)";
+               float lon_geoid:_FillValue=9.9692099683868690e+36f;
+              string lon_geoid:coverage_content_type="referenceInformation";
+
+          float fov_lon(atrack, xtrack, fov);
+              string fov_lon:units="degrees_east";
+               float fov_lon:valid_range=-180.0,  180.0;
+              string fov_lon:long_name="FOV longitude";
+              string fov_lon:standard_name="longitude";
+              string fov_lon:description="longitude of FOV center";
+               float fov_lon:_FillValue=9.9692099683868690e+36f;
+              string fov_lon:coverage_content_type="referenceInformation";
+
+          float lat_bnds(atrack, xtrack, fov_poly);
+              string lat_bnds:units="degrees_north";
+               float lat_bnds:valid_range=-90.0,  90.0;
+              string lat_bnds:long_name="FOV boundary latitudes";
+              string lat_bnds:description="latitudes of points forming a polygon around the perimeter of the FOV";
+               float lat_bnds:_FillValue=9.9692099683868690e+36f;
+              string lat_bnds:coverage_content_type="referenceInformation";
+
+          float lon_bnds(atrack, xtrack, fov_poly);
+              string lon_bnds:units="degrees_east";
+               float lon_bnds:valid_range=-180.0,  180.0;
+              string lon_bnds:long_name="FOV boundary longitudes";
+              string lon_bnds:description="longitudes of points forming a polygon around the perimeter of the FOV";
+               float lon_bnds:_FillValue=9.9692099683868690e+36f;
+              string lon_bnds:coverage_content_type="referenceInformation";
+
+          float land_frac(atrack, xtrack);
+              string land_frac:units="1";
+               float land_frac:valid_range=0.0,  1.0;
+              string land_frac:long_name="FOR land fraction";
+              string land_frac:standard_name="land_area_fraction";
+              string land_frac:coordinates="lon lat";
+              string land_frac:description="land fraction over the FOR";
+               float land_frac:_FillValue=9.9692099683868690e+36f;
+              string land_frac:coverage_content_type="referenceInformation";
+              string land_frac:cell_methods="area: mean (beam-weighted)";
+
+          float fov_land_frac(atrack, xtrack, fov);
+              string fov_land_frac:units="1";
+               float fov_land_frac:valid_range=0.0,  1.0;
+              string fov_land_frac:long_name="FOV land fraction";
+              string fov_land_frac:standard_name="land_area_fraction";
+              string fov_land_frac:coordinates="fov_lon fov_lat";
+              string fov_land_frac:description="land fraction over the FOV";
+               float fov_land_frac:_FillValue=9.9692099683868690e+36f;
+              string fov_land_frac:coverage_content_type="referenceInformation";
+              string fov_land_frac:cell_methods="area: mean (beam-weighted)";
+
+          float surf_alt(atrack, xtrack);
+              string surf_alt:units="m";
+              string surf_alt:ancillary_variables="surf_alt_sdev";
+               float surf_alt:valid_range=-500.0,  10000.0;
+              string surf_alt:long_name="FOR surface altitude";
+              string surf_alt:standard_name="surface_altitude";
+              string surf_alt:coordinates="lon lat";
+              string surf_alt:description="mean surface altitude wrt  earth model over the FOR";
+               float surf_alt:_FillValue=9.9692099683868690e+36f;
+              string surf_alt:coverage_content_type="referenceInformation";
+              string surf_alt:cell_methods="area: mean (beam-weighted)";
+
+          float fov_surf_alt(atrack, xtrack, fov);
+              string fov_surf_alt:units="m";
+              string fov_surf_alt:ancillary_variables="surf_alt_sdev";
+               float fov_surf_alt:valid_range=-500.0,  10000.0;
+              string fov_surf_alt:long_name="FOV surface altitude";
+              string fov_surf_alt:standard_name="surface_altitude";
+              string fov_surf_alt:coordinates="fov_lon fov_lat";
+              string fov_surf_alt:description="mean surface altitude wrt  earth model over the FOV";
+               float fov_surf_alt:_FillValue=9.9692099683868690e+36f;
+              string fov_surf_alt:coverage_content_type="referenceInformation";
+              string fov_surf_alt:cell_methods="area: mean (beam-weighted)";
+
+          float surf_alt_sdev(atrack, xtrack);
+              string surf_alt_sdev:units="m";
+               float surf_alt_sdev:valid_range=0.0,  10000.0;
+              string surf_alt_sdev:long_name="FOR surface altitude standard deviation";
+              string surf_alt_sdev:coordinates="lon lat";
+              string surf_alt_sdev:description="standard deviation of surface altitude within the FOR";
+               float surf_alt_sdev:_FillValue=9.9692099683868690e+36f;
+              string surf_alt_sdev:coverage_content_type="qualityInformation";
+              string surf_alt_sdev:cell_methods="area: standard_deviation (beam-weighted)";
+
+          float fov_surf_alt_sdev(atrack, xtrack, fov);
+              string fov_surf_alt_sdev:units="m";
+               float fov_surf_alt_sdev:valid_range=0.0,  10000.0;
+              string fov_surf_alt_sdev:long_name="FOV surface altitude standard deviation";
+              string fov_surf_alt_sdev:coordinates="fov_lon fov_lat";
+              string fov_surf_alt_sdev:description="standard deviation of surface altitude within the FOV";
+               float fov_surf_alt_sdev:_FillValue=9.9692099683868690e+36f;
+              string fov_surf_alt_sdev:coverage_content_type="qualityInformation";
+              string fov_surf_alt_sdev:cell_methods="area: standard_deviation (beam-weighted)";
+
+          float sun_glint_lat(atrack);
+              string sun_glint_lat:units="degrees_north";
+               float sun_glint_lat:valid_range=-90.0,  90.0;
+              string sun_glint_lat:long_name="sun glint latitude";
+              string sun_glint_lat:standard_name="latitude";
+              string sun_glint_lat:coordinates="subsat_lon subsat_lat";
+              string sun_glint_lat:description="sun glint spot latitude at scan_mid_time.  Fill for night observations.";
+               float sun_glint_lat:_FillValue=9.9692099683868690e+36f;
+              string sun_glint_lat:coverage_content_type="referenceInformation";
+
+          float sun_glint_lon(atrack);
+              string sun_glint_lon:units="degrees_east";
+               float sun_glint_lon:valid_range=-180.0,  180.0;
+              string sun_glint_lon:long_name="sun glint longitude";
+              string sun_glint_lon:standard_name="longitude";
+              string sun_glint_lon:coordinates="subsat_lon subsat_lat";
+              string sun_glint_lon:description="sun glint spot longitude at scan_mid_time.  Fill for night observations.";
+               float sun_glint_lon:_FillValue=9.9692099683868690e+36f;
+              string sun_glint_lon:coverage_content_type="referenceInformation";
+
+          float sol_zen(atrack, xtrack);
+              string sol_zen:units="degree";
+               float sol_zen:valid_range=0.0,  180.0;
+              string sol_zen:long_name="solar zenith angle";
+              string sol_zen:standard_name="solar_zenith_angle";
+              string sol_zen:coordinates="lon lat";
+              string sol_zen:description="solar zenith angle at the center of the spot";
+               float sol_zen:_FillValue=9.9692099683868690e+36f;
+              string sol_zen:coverage_content_type="referenceInformation";
+
+          float sol_azi(atrack, xtrack);
+              string sol_azi:units="degree";
+               float sol_azi:valid_range=0.0,  360.0;
+              string sol_azi:long_name="solar azimuth angle";
+              string sol_azi:standard_name="solar_azimuth_angle";
+              string sol_azi:coordinates="lon lat";
+              string sol_azi:description="solar azimuth angle at the center of the spot";
+               float sol_azi:_FillValue=9.9692099683868690e+36f;
+              string sol_azi:coverage_content_type="referenceInformation";
+
+          float sun_glint_dist(atrack, xtrack);
+              string sun_glint_dist:units="m";
+               float sun_glint_dist:valid_range=0.0,  30000.0;
+              string sun_glint_dist:long_name="sun glint distance";
+              string sun_glint_dist:coordinates="lon lat";
+              string sun_glint_dist:description="distance of sun glint spot to the center of the spot.  Fill for night observations.";
+               float sun_glint_dist:_FillValue=9.9692099683868690e+36f;
+              string sun_glint_dist:coverage_content_type="referenceInformation";
+
+          float view_ang(atrack, xtrack);
+              string view_ang:units="degree";
+               float view_ang:valid_range=0.0,  180.0;
+              string view_ang:long_name="view angle";
+              string view_ang:standard_name="sensor_view_angle";
+              string view_ang:coordinates="lon lat";
+              string view_ang:description="off nadir pointing angle";
+               float view_ang:_FillValue=9.9692099683868690e+36f;
+              string view_ang:coverage_content_type="referenceInformation";
+
+          float sat_zen(atrack, xtrack);
+              string sat_zen:units="degree";
+               float sat_zen:valid_range=0.0,  180.0;
+              string sat_zen:long_name="satellite zenith angle";
+              string sat_zen:standard_name="sensor_zenith_angle";
+              string sat_zen:coordinates="lon lat";
+              string sat_zen:description="satellite zenith angle at the center of the spot";
+               float sat_zen:_FillValue=9.9692099683868690e+36f;
+              string sat_zen:coverage_content_type="referenceInformation";
+
+          float sat_azi(atrack, xtrack);
+              string sat_azi:units="degree";
+               float sat_azi:valid_range=0.0,  360.0;
+              string sat_azi:long_name="satellite azimuth angle";
+              string sat_azi:standard_name="sensor_azimuth_angle";
+              string sat_azi:coordinates="lon lat";
+              string sat_azi:description="satellite azimuth angle at the center of the spot";
+               float sat_azi:_FillValue=9.9692099683868690e+36f;
+              string sat_azi:coverage_content_type="referenceInformation";
+
+          float sat_range(atrack, xtrack);
+              string sat_range:units="m";
+               float sat_range:valid_range=1.0e5,  1.0e7;
+              string sat_range:long_name="satellite range";
+              string sat_range:coordinates="lon lat";
+              string sat_range:description="line of sight distance between satellite and spot center";
+               float sat_range:_FillValue=9.9692099683868690e+36f;
+              string sat_range:coverage_content_type="referenceInformation";
+
+          ubyte asc_flag(atrack);
+              string asc_flag:units="1";
+               ubyte asc_flag:valid_range=0,  1;
+              string asc_flag:long_name="ascending orbit flag";
+              string asc_flag:coordinates="subsat_lon subsat_lat";
+              string asc_flag:description="ascending orbit flag: 1 if ascending, 0 descending";
+               ubyte asc_flag:_FillValue=255ub;
+              string asc_flag:coverage_content_type="referenceInformation";
+              string asc_flag:flag_meanings="descending ascending";
+               ubyte asc_flag:flag_values=0,  1;
+
+          float subsat_lat(atrack);  // standard_name platform_latitude is under review for a future CF version
+              string subsat_lat:units="degrees_north";
+               float subsat_lat:valid_range=-90.0,  90.0;
+              string subsat_lat:long_name="sub-satellite latitude";
+              string subsat_lat:standard_name="latitude";
+              string subsat_lat:description="sub-satellite latitude at scan_mid_time";
+               float subsat_lat:_FillValue=9.9692099683868690e+36f;
+              string subsat_lat:coverage_content_type="referenceInformation";
+
+          float subsat_lon(atrack);  // standard_name platform_longitude is under review for a future CF version
+              string subsat_lon:units="degrees_east";
+               float subsat_lon:valid_range=-180.0,  180.0;
+              string subsat_lon:long_name="sub-satellite longitude";
+              string subsat_lon:standard_name="longitude";
+              string subsat_lon:description="sub-satellite longitude at scan_mid_time";
+               float subsat_lon:_FillValue=9.9692099683868690e+36f;
+              string subsat_lon:coverage_content_type="referenceInformation";
+
+         double scan_mid_time(atrack);
+              string scan_mid_time:units="seconds since 1993-01-01 00:00";
+              double scan_mid_time:valid_range=-2934835217.0,  3376598409.0;
+              string scan_mid_time:long_name="midscan TAI93";
+              string scan_mid_time:standard_name="time";
+              string scan_mid_time:coordinates="subsat_lon subsat_lat";
+              string scan_mid_time:description="TAI93 at  middle of earth scene scans";
+              double scan_mid_time:_FillValue=9.9692099683868690e+36;
+              string scan_mid_time:coverage_content_type="referenceInformation";
+
+          float sat_alt(atrack);  // standard_name platform_altitude is under review for a future CF version
+              string sat_alt:units="m";
+               float sat_alt:valid_range=1.0e5,  1.0e6;
+              string sat_alt:long_name="satellite altitude";
+              string sat_alt:standard_name="altitude";
+              string sat_alt:coordinates="subsat_lon subsat_lat";
+              string sat_alt:description="satellite altitude with respect to earth model at scan_mid_time";
+               float sat_alt:_FillValue=9.9692099683868690e+36f;
+              string sat_alt:coverage_content_type="referenceInformation";
+
+          float sat_pos(atrack, spatial);
+              string sat_pos:units="m";
+              string sat_pos:long_name="satellite position";
+              string sat_pos:coordinates="subsat_lon subsat_lat spatial_lbl";
+              string sat_pos:description="satellite ECR position at scan_mid_time";
+               float sat_pos:_FillValue=9.9692099683868690e+36f;
+              string sat_pos:coverage_content_type="referenceInformation";
+
+          float sat_vel(atrack, spatial);
+              string sat_vel:units="m s-1";
+              string sat_vel:long_name="satellite velocity";
+              string sat_vel:coordinates="subsat_lon subsat_lat spatial_lbl";
+              string sat_vel:description="satellite ECR velocity at scan_mid_time";
+               float sat_vel:_FillValue=9.9692099683868690e+36f;
+              string sat_vel:coverage_content_type="referenceInformation";
+
+          float sat_att(atrack, attitude);
+              string sat_att:units="degree";
+               float sat_att:valid_range=-180.0,  180.0;
+              string sat_att:long_name="satellite attitude";
+              string sat_att:coordinates="subsat_lon subsat_lat angular_lbl";
+              string sat_att:description="satellite attitude at scan_mid_time.  An orthogonal triad.  First element is angle about the +x (roll) ORB axis.  +x axis is positively oriented in the direction of orbital flight.  Second element is angle about +y (pitch) ORB axis.  +y axis is oriented normal to the orbit plane with the positive sense opposite to that of the orbit's angular momentum vector H.  Third element is angle about +z (yaw) axis.  +z axis is positively oriented Earthward parallel to the satellite radius vector R from the spacecraft center of mass to the center of the Earth.";
+               float sat_att:_FillValue=9.9692099683868690e+36f;
+              string sat_att:coverage_content_type="referenceInformation";
+
+         string attitude_lbl(attitude);
+              string attitude_lbl:long_name="rotational direction";
+              string attitude_lbl:description="list of rotational directions (roll, pitch, yaw)";
+              string attitude_lbl:coverage_content_type="auxillaryInformation";
+
+         string spatial_lbl(spatial);
+              string spatial_lbl:long_name="spatial direction";
+              string spatial_lbl:description="list of spatial directions (X, Y, Z)";
+              string spatial_lbl:coverage_content_type="auxillaryInformation";
+
+         string utc_tuple_lbl(utc_tuple);
+              string utc_tuple_lbl:long_name="UTC date/time parts";
+              string utc_tuple_lbl:description="names of the elements of UTC when it is expressed as an array of integers year,month,day,hour,minute,second,millisecond,microsecond";
+              string utc_tuple_lbl:coverage_content_type="auxillaryInformation";
+
+          float air_temp(atrack, xtrack, lev_100);
+              string air_temp:units="K";
+              string air_temp:ancillary_variables="air_temp_qc air_temp_err";
+               float air_temp:valid_range=100,  400;
+              string air_temp:long_name="air temperature profile";
+              string air_temp:standard_name="air_temperature";
+              string air_temp:coordinates="lon lat";
+              string air_temp:description="air temperature profile on 100 levels";
+              string air_temp:AIRS_name="TAirSup";
+               float air_temp:_FillValue=9.9692099683868690e+36f;
+              string air_temp:cell_methods="area: mean";
+              string air_temp:coverage_content_type="physicalMeasurement";
+
+          ubyte air_temp_qc(atrack, xtrack, lev_100);
+              string air_temp_qc:units="1";
+               ubyte air_temp_qc:valid_range=0,  2;
+              string air_temp_qc:long_name="air_temp QC";
+              string air_temp_qc:standard_name="air_temperature status_flag";
+              string air_temp_qc:coordinates="lon lat";
+              string air_temp_qc:description="air_temp QC flag";
+              string air_temp_qc:AIRS_name="TAirSup_QC";
+               ubyte air_temp_qc:_FillValue=255ub;
+              string air_temp_qc:coverage_content_type="qualityInformation";
+              string air_temp_qc:flag_meanings="Best Good Do_Not_Use";
+               ubyte air_temp_qc:flag_values=0,  1,  2;
+
+          float air_temp_err(atrack, xtrack, lev_100);
+              string air_temp_err:units="K";
+               float air_temp_err:valid_range=0,  100;
+              string air_temp_err:long_name="air_temp error estimate";
+              string air_temp_err:standard_name="air_temperature standard_error";
+              string air_temp_err:coordinates="lon lat";
+              string air_temp_err:description="air_temp error estimate";
+              string air_temp_err:AIRS_name="TAirSupErr";
+               float air_temp_err:_FillValue=9.9692099683868690e+36f;
+              string air_temp_err:coverage_content_type="qualityInformation";
+
+          float air_temp_dof(atrack, xtrack);
+              string air_temp_dof:units="1";
+               float air_temp_dof:valid_range=0,  100;
+              string air_temp_dof:long_name="air_temp DOFs";
+              string air_temp_dof:coordinates="lon lat";
+              string air_temp_dof:description="air temperature profile degrees of freedom";
+              string air_temp_dof:AIRS_name="Temp_dof";
+               float air_temp_dof:_FillValue=9.9692099683868690e+36f;
+              string air_temp_dof:coverage_content_type="qualityInformation";
+
+          float air_temp_surf(atrack, xtrack);
+              string air_temp_surf:units="K";
+              string air_temp_surf:ancillary_variables="air_temp_surf_qc air_temp_surf_err";
+               float air_temp_surf:valid_range=100,  400;
+              string air_temp_surf:long_name="near-surface temperature";
+              string air_temp_surf:standard_name="air_temperature";
+              string air_temp_surf:coordinates="lon lat";
+              string air_temp_surf:description="near-surface air temperature (~2 meters above surface)";
+              string air_temp_surf:AIRS_name="TSurfAir";
+               float air_temp_surf:_FillValue=9.9692099683868690e+36f;
+              string air_temp_surf:cell_methods="area: mean";
+              string air_temp_surf:coverage_content_type="physicalMeasurement";
+
+          ubyte air_temp_surf_qc(atrack, xtrack);
+              string air_temp_surf_qc:units="1";
+               ubyte air_temp_surf_qc:valid_range=0,  2;
+              string air_temp_surf_qc:long_name="air_temp_surf QC";
+              string air_temp_surf_qc:standard_name="air_temperature status_flag";
+              string air_temp_surf_qc:coordinates="lon lat";
+              string air_temp_surf_qc:description="air_temp_surf QC flag";
+              string air_temp_surf_qc:AIRS_name="TSurfAir_QC";
+               ubyte air_temp_surf_qc:_FillValue=255ub;
+              string air_temp_surf_qc:coverage_content_type="qualityInformation";
+              string air_temp_surf_qc:flag_meanings="Best Good Do_Not_Use";
+               ubyte air_temp_surf_qc:flag_values=0,  1,  2;
+
+          float air_temp_surf_err(atrack, xtrack);
+              string air_temp_surf_err:units="K";
+               float air_temp_surf_err:valid_range=0,  100;
+              string air_temp_surf_err:long_name="air_temp_surf error estimate";
+              string air_temp_surf_err:standard_name="air_temperature standard_error";
+              string air_temp_surf_err:coordinates="lon lat";
+              string air_temp_surf_err:description="air_temp_surf error estimate";
+              string air_temp_surf_err:AIRS_name="TSurfAirErr";
+               float air_temp_surf_err:_FillValue=9.9692099683868690e+36f;
+              string air_temp_surf_err:coverage_content_type="qualityInformation";
+
+          float h2o_vap_dof(atrack, xtrack);
+              string h2o_vap_dof:units="1";
+               float h2o_vap_dof:valid_range=0,  100;
+              string h2o_vap_dof:long_name="water vapor profile DOFs";
+              string h2o_vap_dof:coordinates="lon lat";
+              string h2o_vap_dof:description="water vapor profile degrees of freedom";
+              string h2o_vap_dof:AIRS_name="H2O_dof";
+               float h2o_vap_dof:_FillValue=9.9692099683868690e+36f;
+              string h2o_vap_dof:coverage_content_type="qualityInformation";
+
+          float spec_hum_lev(atrack, xtrack, lev_100);
+              string spec_hum_lev:units="1";
+              string spec_hum_lev:ancillary_variables="spec_hum_lev_qc spec_hum_lev_err";
+               float spec_hum_lev:valid_range=0,  200;
+              string spec_hum_lev:long_name="water vapor specific humidity profile";
+              string spec_hum_lev:standard_name="specific_humidity";
+              string spec_hum_lev:coordinates="lon lat";
+              string spec_hum_lev:description="water vapor specific humidity on 100 levels";
+              string spec_hum_lev:AIRS_name="H2OMMRLevSup";
+               float spec_hum_lev:_FillValue=9.9692099683868690e+36f;
+              string spec_hum_lev:cell_methods="area: mean";
+              string spec_hum_lev:coverage_content_type="physicalMeasurement";
+
+          ubyte spec_hum_lev_qc(atrack, xtrack, lev_100);
+              string spec_hum_lev_qc:units="1";
+               ubyte spec_hum_lev_qc:valid_range=0,  2;
+              string spec_hum_lev_qc:long_name="spec_hum_lev QC";
+              string spec_hum_lev_qc:standard_name="specific_humidity status_flag";
+              string spec_hum_lev_qc:coordinates="lon lat";
+              string spec_hum_lev_qc:description="spec_hum_lev QC flag";
+              string spec_hum_lev_qc:AIRS_name="H2OMMRLevSup_QC";
+               ubyte spec_hum_lev_qc:_FillValue=255ub;
+              string spec_hum_lev_qc:coverage_content_type="qualityInformation";
+              string spec_hum_lev_qc:flag_meanings="Best Good Do_Not_Use";
+               ubyte spec_hum_lev_qc:flag_values=0,  1,  2;
+
+          float spec_hum_lev_err(atrack, xtrack, lev_100);
+              string spec_hum_lev_err:units="1";
+               float spec_hum_lev_err:valid_range=0,  200;
+              string spec_hum_lev_err:long_name="spec_hum_lev error estimate";
+              string spec_hum_lev_err:standard_name="specific_humidity standard_error";
+              string spec_hum_lev_err:coordinates="lon lat";
+              string spec_hum_lev_err:description="spec_hum_lev error estimate";
+              string spec_hum_lev_err:AIRS_name="H2OMMRLevSupErr";
+               float spec_hum_lev_err:_FillValue=9.9692099683868690e+36f;
+              string spec_hum_lev_err:coverage_content_type="qualityInformation";
+
+          float spec_hum_surf(atrack, xtrack);
+              string spec_hum_surf:units="1";
+              string spec_hum_surf:ancillary_variables="spec_hum_surf_qc spec_hum_surf_err";
+               float spec_hum_surf:valid_range=0,  200;
+              string spec_hum_surf:long_name="water vapor specific humidity surface";
+              string spec_hum_surf:standard_name="surface_specific_humidity";
+              string spec_hum_surf:coordinates="lon lat";
+              string spec_hum_surf:description="water vapor specific humidity on 100 levels near the surface";
+              string spec_hum_surf:AIRS_name="H2OMMRSurf";
+               float spec_hum_surf:_FillValue=9.9692099683868690e+36f;
+              string spec_hum_surf:cell_methods="area: mean";
+              string spec_hum_surf:coverage_content_type="physicalMeasurement";
+
+          ubyte spec_hum_surf_qc(atrack, xtrack);
+              string spec_hum_surf_qc:units="1";
+              string spec_hum_surf_qc:ancillary_variables="/temp";
+               ubyte spec_hum_surf_qc:valid_range=0,  2;
+              string spec_hum_surf_qc:long_name="spec_hum_surf QC";
+              string spec_hum_surf_qc:standard_name="surface_specific_humidity status_flag";
+              string spec_hum_surf_qc:coordinates="lon lat";
+              string spec_hum_surf_qc:description="spec_hum_surf QC flag";
+              string spec_hum_surf_qc:AIRS_name="H2OMMRSurf_QC";
+               ubyte spec_hum_surf_qc:_FillValue=255ub;
+              string spec_hum_surf_qc:coverage_content_type="qualityInformation";
+              string spec_hum_surf_qc:flag_meanings="Best Good Do_Not_Use";
+               ubyte spec_hum_surf_qc:flag_values=0,  1,  2;
+
+          float spec_hum_surf_err(atrack, xtrack);
+              string spec_hum_surf_err:units="1";
+               float spec_hum_surf_err:valid_range=0,  200;
+              string spec_hum_surf_err:long_name="spec_hum_surf error estimate";
+              string spec_hum_surf_err:standard_name="surface_specific_humidity standard_error";
+              string spec_hum_surf_err:coordinates="lon lat";
+              string spec_hum_surf_err:description="spec_hum_surf error estimate";
+              string spec_hum_surf_err:AIRS_name="H2OMMRSurfErr";
+               float spec_hum_surf_err:_FillValue=9.9692099683868690e+36f;
+              string spec_hum_surf_err:coverage_content_type="qualityInformation";
+
+          float h2o_vap_tot(atrack, xtrack);
+              string h2o_vap_tot:units="kg / m2";
+              string h2o_vap_tot:ancillary_variables="h2o_vap_tot_qc h2o_vap_tot_err";
+              string h2o_vap_tot:long_name="total water vapor";
+              string h2o_vap_tot:standard_name="atmosphere_mass_content_of_water_vapor";
+              string h2o_vap_tot:coordinates="lon lat";
+              string h2o_vap_tot:description="total precipitable water vapor";
+              string h2o_vap_tot:AIRS_name="totH2OStd";
+               float h2o_vap_tot:_FillValue=9.9692099683868690e+36f;
+              string h2o_vap_tot:cell_methods="area: mean";
+              string h2o_vap_tot:coverage_content_type="physicalMeasurement";
+
+          ubyte h2o_vap_tot_qc(atrack, xtrack);
+              string h2o_vap_tot_qc:units="1";
+               ubyte h2o_vap_tot_qc:valid_range=0,  2;
+              string h2o_vap_tot_qc:long_name="h2o_vap_tot QC";
+              string h2o_vap_tot_qc:standard_name="atmosphere_mass_content_of_water_vapor status_flag";
+              string h2o_vap_tot_qc:coordinates="lon lat";
+              string h2o_vap_tot_qc:description="h2o_vap_tot QC flag";
+              string h2o_vap_tot_qc:AIRS_name="totH2OStd_QC";
+               ubyte h2o_vap_tot_qc:_FillValue=255ub;
+              string h2o_vap_tot_qc:coverage_content_type="qualityInformation";
+              string h2o_vap_tot_qc:flag_meanings="Best Good Do_Not_Use";
+               ubyte h2o_vap_tot_qc:flag_values=0,  1,  2;
+
+          float h2o_vap_tot_err(atrack, xtrack);
+              string h2o_vap_tot_err:units="kg / m2";
+              string h2o_vap_tot_err:long_name="h2o_vap_tot error estimate";
+              string h2o_vap_tot_err:standard_name="atmosphere_mass_content_of_water_vapor standard_error";
+              string h2o_vap_tot_err:coordinates="lon lat";
+              string h2o_vap_tot_err:description="h2o_vap_tot error estimate";
+              string h2o_vap_tot_err:AIRS_name="totH2OStdErr";
+               float h2o_vap_tot_err:_FillValue=9.9692099683868690e+36f;
+              string h2o_vap_tot_err:coverage_content_type="qualityInformation";
+
+          float rel_hum_lev(atrack, xtrack, lev_100);
+              string rel_hum_lev:units="1";
+              string rel_hum_lev:ancillary_variables="rel_hum_lev_qc rel_hum_lev_err";
+               float rel_hum_lev:valid_range=0,  2;
+              string rel_hum_lev:long_name="relative humidity profile";
+              string rel_hum_lev:standard_name="relative_humidity";
+              string rel_hum_lev:coordinates="lon lat";
+              string rel_hum_lev:description="relative humidity on 100 levels over equilibrium phase";
+              string rel_hum_lev:AIRS_name="RelHum (15 pressure levels)";
+               float rel_hum_lev:_FillValue=9.9692099683868690e+36f;
+              string rel_hum_lev:cell_methods="area: mean";
+              string rel_hum_lev:coverage_content_type="physicalMeasurement";
+
+          ubyte rel_hum_lev_qc(atrack, xtrack, lev_100);
+              string rel_hum_lev_qc:units="1";
+               ubyte rel_hum_lev_qc:valid_range=0,  2;
+              string rel_hum_lev_qc:long_name="rel_hum_lev QC";
+              string rel_hum_lev_qc:standard_name="relative_humidity status_flag";
+              string rel_hum_lev_qc:coordinates="lon lat";
+              string rel_hum_lev_qc:description="rel_hum_lev QC flag";
+              string rel_hum_lev_qc:AIRS_name="RelHum_QC";
+               ubyte rel_hum_lev_qc:_FillValue=255ub;
+              string rel_hum_lev_qc:coverage_content_type="qualityInformation";
+              string rel_hum_lev_qc:flag_meanings="Best Good Do_Not_Use";
+               ubyte rel_hum_lev_qc:flag_values=0,  1,  2;
+
+          float rel_hum_lev_err(atrack, xtrack, lev_100);
+              string rel_hum_lev_err:units="1";
+               float rel_hum_lev_err:valid_range=0,  200;
+              string rel_hum_lev_err:long_name="rel_hum_lev error estimate";
+              string rel_hum_lev_err:standard_name="relative_humidity standard_error";
+              string rel_hum_lev_err:coordinates="lon lat";
+              string rel_hum_lev_err:description="rel_hum_lev error estimate";
+               float rel_hum_lev_err:_FillValue=9.9692099683868690e+36f;
+              string rel_hum_lev_err:coverage_content_type="qualityInformation";
+
+          float rel_hum_surf(atrack, xtrack);
+              string rel_hum_surf:units="1";
+              string rel_hum_surf:ancillary_variables="rel_hum_surf_qc rel_hum_surf_err";
+               float rel_hum_surf:valid_range=0,  2;
+              string rel_hum_surf:long_name="surface relative humidity";
+              string rel_hum_surf:standard_name="relative_humidity";
+              string rel_hum_surf:coordinates="lon lat";
+              string rel_hum_surf:description="relative humidity near the surface over equilibrium phase";
+              string rel_hum_surf:AIRS_name="RelHumSurf";
+               float rel_hum_surf:_FillValue=9.9692099683868690e+36f;
+              string rel_hum_surf:cell_methods="area: mean";
+              string rel_hum_surf:coverage_content_type="physicalMeasurement";
+
+          ubyte rel_hum_surf_qc(atrack, xtrack);
+              string rel_hum_surf_qc:units="1";
+               ubyte rel_hum_surf_qc:valid_range=0,  2;
+              string rel_hum_surf_qc:long_name="rel_hum_surf QC";
+              string rel_hum_surf_qc:standard_name="relative_humidity status_flag";
+              string rel_hum_surf_qc:coordinates="lon lat";
+              string rel_hum_surf_qc:description="rel_hum_surf QC flag";
+              string rel_hum_surf_qc:AIRS_name="RelHumSurf_QC";
+               ubyte rel_hum_surf_qc:_FillValue=255ub;
+              string rel_hum_surf_qc:coverage_content_type="qualityInformation";
+              string rel_hum_surf_qc:flag_meanings="Best Good Do_Not_Use";
+               ubyte rel_hum_surf_qc:flag_values=0,  1,  2;
+
+          float rel_hum_surf_err(atrack, xtrack);
+              string rel_hum_surf_err:units="1";
+               float rel_hum_surf_err:valid_range=0,  200;
+              string rel_hum_surf_err:long_name="rel_hum_surf error estimate";
+              string rel_hum_surf_err:standard_name="relative_humidity standard_error";
+              string rel_hum_surf_err:coordinates="lon lat";
+              string rel_hum_surf_err:description="rel_hum_surf error estimate";
+               float rel_hum_surf_err:_FillValue=9.9692099683868690e+36f;
+              string rel_hum_surf_err:coverage_content_type="qualityInformation";
+
+          float sat_spec_hum_ice(atrack, xtrack, lev_100);
+              string sat_spec_hum_ice:units="1";
+              string sat_spec_hum_ice:ancillary_variables="sat_spec_hum_ice_qc sat_spec_hum_ice_err";
+               float sat_spec_hum_ice:valid_range=0,  200;
+              string sat_spec_hum_ice:long_name="saturation specific humidity vs ice";
+              string sat_spec_hum_ice:coordinates="lon lat";
+              string sat_spec_hum_ice:description="saturation specific humidity relative to ice phase";
+              string sat_spec_hum_ice:AIRS_name="(AIRS had liquid and equilibrium phase", " not ice)";
+               float sat_spec_hum_ice:_FillValue=9.9692099683868690e+36f;
+              string sat_spec_hum_ice:cell_methods="area: mean";
+              string sat_spec_hum_ice:coverage_content_type="physicalMeasurement";
+
+          ubyte sat_spec_hum_ice_qc(atrack, xtrack, lev_100);
+              string sat_spec_hum_ice_qc:units="1";
+               ubyte sat_spec_hum_ice_qc:valid_range=0,  2;
+              string sat_spec_hum_ice_qc:long_name="sat_spec_hum_ice QC";
+              string sat_spec_hum_ice_qc:coordinates="lon lat";
+              string sat_spec_hum_ice_qc:description="sat_spec_hum_ice QC flag";
+               ubyte sat_spec_hum_ice_qc:_FillValue=255ub;
+              string sat_spec_hum_ice_qc:coverage_content_type="qualityInformation";
+              string sat_spec_hum_ice_qc:flag_meanings="Best Good Do_Not_Use";
+               ubyte sat_spec_hum_ice_qc:flag_values=0,  1,  2;
+
+          float sat_spec_hum_ice_err(atrack, xtrack, lev_100);
+              string sat_spec_hum_ice_err:units="1";
+               float sat_spec_hum_ice_err:valid_range=0,  200;
+              string sat_spec_hum_ice_err:long_name="sat_spec_hum_ice error estimate";
+              string sat_spec_hum_ice_err:coordinates="lon lat";
+              string sat_spec_hum_ice_err:description="sat_spec_hum_ice error estimate";
+               float sat_spec_hum_ice_err:_FillValue=9.9692099683868690e+36f;
+              string sat_spec_hum_ice_err:coverage_content_type="qualityInformation";
+
+          float sat_spec_hum_ice_surf(atrack, xtrack);
+              string sat_spec_hum_ice_surf:units="1";
+              string sat_spec_hum_ice_surf:ancillary_variables="sat_spec_hum_ice_surf_qc sat_spec_hum_ice_surf_err";
+               float sat_spec_hum_ice_surf:valid_range=0,  200;
+              string sat_spec_hum_ice_surf:long_name="surface saturation specific humidity vs ice";
+              string sat_spec_hum_ice_surf:coordinates="lon lat";
+              string sat_spec_hum_ice_surf:description="Near-surface saturation specific humidity relative to ice phase";
+              string sat_spec_hum_ice_surf:AIRS_name="(AIRS had liquid and equilibrium phase", " not ice)";
+               float sat_spec_hum_ice_surf:_FillValue=9.9692099683868690e+36f;
+              string sat_spec_hum_ice_surf:cell_methods="area: mean";
+              string sat_spec_hum_ice_surf:coverage_content_type="physicalMeasurement";
+
+          ubyte sat_spec_hum_ice_surf_qc(atrack, xtrack);
+              string sat_spec_hum_ice_surf_qc:units="1";
+               ubyte sat_spec_hum_ice_surf_qc:valid_range=0,  2;
+              string sat_spec_hum_ice_surf_qc:long_name="sat_spec_hum_ice_surf QC";
+              string sat_spec_hum_ice_surf_qc:coordinates="lon lat";
+              string sat_spec_hum_ice_surf_qc:description="sat_spec_hum_ice_surf QC flag";
+               ubyte sat_spec_hum_ice_surf_qc:_FillValue=255ub;
+              string sat_spec_hum_ice_surf_qc:coverage_content_type="qualityInformation";
+              string sat_spec_hum_ice_surf_qc:flag_meanings="Best Good Do_Not_Use";
+               ubyte sat_spec_hum_ice_surf_qc:flag_values=0,  1,  2;
+
+          float sat_spec_hum_ice_surf_err(atrack, xtrack);
+              string sat_spec_hum_ice_surf_err:units="1";
+               float sat_spec_hum_ice_surf_err:valid_range=0,  200;
+              string sat_spec_hum_ice_surf_err:long_name="sat_spec_hum_ice_surf error estimate";
+              string sat_spec_hum_ice_surf_err:coordinates="lon lat";
+              string sat_spec_hum_ice_surf_err:description="sat_spec_hum_ice_surf error estimate";
+               float sat_spec_hum_ice_surf_err:_FillValue=9.9692099683868690e+36f;
+              string sat_spec_hum_ice_surf_err:coverage_content_type="qualityInformation";
+
+          float sat_spec_hum_liq(atrack, xtrack, lev_100);
+              string sat_spec_hum_liq:units="1";
+              string sat_spec_hum_liq:ancillary_variables="sat_spec_hum_liq_qc sat_spec_hum_liq_err";
+               float sat_spec_hum_liq:valid_range=0,  200;
+              string sat_spec_hum_liq:long_name="saturation specific humidity vs liquid";
+              string sat_spec_hum_liq:coordinates="lon lat";
+              string sat_spec_hum_liq:description="saturation specific humidity relative to liquid phase";
+              string sat_spec_hum_liq:AIRS_name="H2OMMRSatLevStd_liquid";
+               float sat_spec_hum_liq:_FillValue=9.9692099683868690e+36f;
+              string sat_spec_hum_liq:cell_methods="area: mean";
+              string sat_spec_hum_liq:coverage_content_type="physicalMeasurement";
+
+          ubyte sat_spec_hum_liq_qc(atrack, xtrack, lev_100);
+              string sat_spec_hum_liq_qc:units="1";
+               ubyte sat_spec_hum_liq_qc:valid_range=0,  2;
+              string sat_spec_hum_liq_qc:long_name="sat_spec_hum_liq QC";
+              string sat_spec_hum_liq_qc:coordinates="lon lat";
+              string sat_spec_hum_liq_qc:description="sat_spec_hum_liq QC flag";
+              string sat_spec_hum_liq_qc:AIRS_name="H2OMMRSatLevStd_liquid_QC";
+               ubyte sat_spec_hum_liq_qc:_FillValue=255ub;
+              string sat_spec_hum_liq_qc:coverage_content_type="qualityInformation";
+              string sat_spec_hum_liq_qc:flag_meanings="Best Good Do_Not_Use";
+               ubyte sat_spec_hum_liq_qc:flag_values=0,  1,  2;
+
+          float sat_spec_hum_liq_err(atrack, xtrack, lev_100);
+              string sat_spec_hum_liq_err:units="1";
+               float sat_spec_hum_liq_err:valid_range=0,  200;
+              string sat_spec_hum_liq_err:long_name="sat_spec_hum_liq error estimate";
+              string sat_spec_hum_liq_err:coordinates="lon lat";
+              string sat_spec_hum_liq_err:description="sat_spec_hum_liq error estimate";
+               float sat_spec_hum_liq_err:_FillValue=9.9692099683868690e+36f;
+              string sat_spec_hum_liq_err:coverage_content_type="qualityInformation";
+
+          float sat_spec_hum_liq_surf(atrack, xtrack);
+              string sat_spec_hum_liq_surf:units="1";
+              string sat_spec_hum_liq_surf:ancillary_variables="sat_spec_hum_liq_surf_qc sat_spec_hum_liq_surf_err";
+               float sat_spec_hum_liq_surf:valid_range=0,  200;
+              string sat_spec_hum_liq_surf:long_name="surface saturation specific humidity vs liquid";
+              string sat_spec_hum_liq_surf:coordinates="lon lat";
+              string sat_spec_hum_liq_surf:description="Near-surface saturation specific humidity relative to liquid phase";
+              string sat_spec_hum_liq_surf:AIRS_name="H2OMMRSatSurf_liquid";
+               float sat_spec_hum_liq_surf:_FillValue=9.9692099683868690e+36f;
+              string sat_spec_hum_liq_surf:cell_methods="area: mean";
+              string sat_spec_hum_liq_surf:coverage_content_type="physicalMeasurement";
+
+          ubyte sat_spec_hum_liq_surf_qc(atrack, xtrack);
+              string sat_spec_hum_liq_surf_qc:units="1";
+               ubyte sat_spec_hum_liq_surf_qc:valid_range=0,  2;
+              string sat_spec_hum_liq_surf_qc:long_name="sat_spec_hum_liq_surf QC";
+              string sat_spec_hum_liq_surf_qc:coordinates="lon lat";
+              string sat_spec_hum_liq_surf_qc:description="sat_spec_hum_liq_surf QC flag";
+              string sat_spec_hum_liq_surf_qc:AIRS_name="H2OMMRSatSurf_liquid_QC";
+               ubyte sat_spec_hum_liq_surf_qc:_FillValue=255ub;
+              string sat_spec_hum_liq_surf_qc:coverage_content_type="qualityInformation";
+              string sat_spec_hum_liq_surf_qc:flag_meanings="Best Good Do_Not_Use";
+               ubyte sat_spec_hum_liq_surf_qc:flag_values=0,  1,  2;
+
+          float sat_spec_hum_liq_surf_err(atrack, xtrack);
+              string sat_spec_hum_liq_surf_err:units="1";
+               float sat_spec_hum_liq_surf_err:valid_range=0,  200;
+              string sat_spec_hum_liq_surf_err:long_name="sat_spec_hum_liq_surf error estimate";
+              string sat_spec_hum_liq_surf_err:coordinates="lon lat";
+              string sat_spec_hum_liq_surf_err:description="sat_spec_hum_liq_surf error estimate";
+               float sat_spec_hum_liq_surf_err:_FillValue=9.9692099683868690e+36f;
+              string sat_spec_hum_liq_surf_err:coverage_content_type="qualityInformation";
+
+          float o3_vmr_lev(atrack, xtrack, lev_100);
+              string o3_vmr_lev:units="1";
+              string o3_vmr_lev:long_name="ozone VMR profile";
+              string o3_vmr_lev:standard_name="mole_fraction_of_ozone_in_air";
+              string o3_vmr_lev:coordinates="lon lat";
+              string o3_vmr_lev:description="ozone volume mixing ratio profile on 100 levels";
+               float o3_vmr_lev:_FillValue=9.9692099683868690e+36f;
+              string o3_vmr_lev:cell_methods="area: mean";
+              string o3_vmr_lev:coverage_content_type="physicalMeasurement";
+
+          ubyte o3_vmr_lev_qc(atrack, xtrack, lev_100);
+              string o3_vmr_lev_qc:units="1";
+               ubyte o3_vmr_lev_qc:valid_range=0,  2;
+              string o3_vmr_lev_qc:long_name="o3_vmr_lev QC";
+              string o3_vmr_lev_qc:coordinates="lon lat";
+              string o3_vmr_lev_qc:description="o3_vmr_lev QC";
+               ubyte o3_vmr_lev_qc:_FillValue=255ub;
+              string o3_vmr_lev_qc:coverage_content_type="qualityInformation";
+
+          float o3_dof(atrack, xtrack);
+              string o3_dof:units="1";
+               float o3_dof:valid_range=0,  100;
+              string o3_dof:long_name="ozone profile DOFs";
+              string o3_dof:coordinates="lon lat";
+              string o3_dof:description="ozone profile degrees of freedom";
+               float o3_dof:_FillValue=9.9692099683868690e+36f;
+              string o3_dof:coverage_content_type="qualityInformation";
+
+          float o3_tot(atrack, xtrack);
+              string o3_tot:units="Dobson";
+              string o3_tot:long_name="total ozone";
+              string o3_tot:standard_name="atmosphere_mole_content_of_ozone";
+              string o3_tot:coordinates="lon lat";
+              string o3_tot:description="total column ozone";
+               float o3_tot:_FillValue=9.9692099683868690e+36f;
+              string o3_tot:cell_methods="area: mean";
+              string o3_tot:coverage_content_type="physicalMeasurement";
+
+          ubyte o3_tot_qc(atrack, xtrack);
+              string o3_tot_qc:units="1";
+               ubyte o3_tot_qc:valid_range=0,  2;
+              string o3_tot_qc:long_name="total ozone QC";
+              string o3_tot_qc:coordinates="lon lat";
+              string o3_tot_qc:description="total column ozone QC";
+               ubyte o3_tot_qc:_FillValue=255ub;
+              string o3_tot_qc:coverage_content_type="qualityInformation";
+
+          float co_vmr_lev(atrack, xtrack, lev_100);
+              string co_vmr_lev:units="1";
+              string co_vmr_lev:long_name="CO VMR profile";
+              string co_vmr_lev:standard_name="mole_fraction_of_carbon_monoxide_in_air";
+              string co_vmr_lev:coordinates="lon lat";
+              string co_vmr_lev:description="Carbon monoxide volume mixing ratio profile on 100 levels";
+               float co_vmr_lev:_FillValue=9.9692099683868690e+36f;
+              string co_vmr_lev:cell_methods="area: mean";
+              string co_vmr_lev:coverage_content_type="physicalMeasurement";
+
+          float co_dof(atrack, xtrack);
+              string co_dof:units="1";
+               float co_dof:valid_range=0,  100;
+              string co_dof:long_name="CO profile DOFs";
+              string co_dof:coordinates="lon lat";
+              string co_dof:description="Carbon monoxide profile degrees of freedom";
+               float co_dof:_FillValue=9.9692099683868690e+36f;
+              string co_dof:coverage_content_type="qualityInformation";
+
+          float co_tot(atrack, xtrack);
+              string co_tot:units="molecules / cm2";
+              string co_tot:long_name="total CO";
+              string co_tot:standard_name="atmosphere_mass_content_of_carbon_monoxide";
+              string co_tot:coordinates="lon lat";
+              string co_tot:description="total column carbon monoxide";
+               float co_tot:_FillValue=9.9692099683868690e+36f;
+              string co_tot:cell_methods="area: mean";
+              string co_tot:coverage_content_type="physicalMeasurement";
+
+          ubyte co_tot_qc(atrack, xtrack);
+              string co_tot_qc:units="1";
+               ubyte co_tot_qc:valid_range=0,  2;
+              string co_tot_qc:long_name="total CO QC";
+              string co_tot_qc:coordinates="lon lat";
+              string co_tot_qc:description="total column carbon monoxide QC";
+               ubyte co_tot_qc:_FillValue=255ub;
+              string co_tot_qc:coverage_content_type="qualityInformation";
+
+          float ch4_dof(atrack, xtrack);
+              string ch4_dof:units="1";
+               float ch4_dof:valid_range=0,  100;
+              string ch4_dof:long_name="Methane profile DOFs";
+              string ch4_dof:coordinates="lon lat";
+              string ch4_dof:description="Methane profile degrees of freedom";
+               float ch4_dof:_FillValue=9.9692099683868690e+36f;
+              string ch4_dof:coverage_content_type="qualityInformation";
+
+          float ch4_tot(atrack, xtrack);
+              string ch4_tot:units="molecules / cm2";
+              string ch4_tot:long_name="total methane";
+              string ch4_tot:coordinates="lon lat";
+              string ch4_tot:description="total column methane";
+               float ch4_tot:_FillValue=9.9692099683868690e+36f;
+              string ch4_tot:cell_methods="area: mean";
+              string ch4_tot:coverage_content_type="physicalMeasurement";
+
+          ubyte ch4_tot_qc(atrack, xtrack);
+              string ch4_tot_qc:units="1";
+               ubyte ch4_tot_qc:valid_range=0,  2;
+              string ch4_tot_qc:long_name="total methane QC";
+              string ch4_tot_qc:coordinates="lon lat";
+              string ch4_tot_qc:description="total column methane QC";
+               ubyte ch4_tot_qc:_FillValue=255ub;
+              string ch4_tot_qc:coverage_content_type="qualityInformation";
+
+          short mw_cld_phase(atrack, xtrack, lay_100);
+              string mw_cld_phase:units="1";
+               short mw_cld_phase:valid_range=0,  1;
+              string mw_cld_phase:long_name="MW cloud ice/water";
+              string mw_cld_phase:standard_name="thermodynamic_phase_of_cloud_water_particles_at_cloud_top";
+              string mw_cld_phase:coordinates="lon lat";
+              string mw_cld_phase:description="Cloud Ice/Water flag from microwave";
+              string mw_cld_phase:AIRS_name="ciw";
+               short mw_cld_phase:_FillValue=-32767s;
+              string mw_cld_phase:coverage_content_type="thematicClassification";
+              string mw_cld_phase:flag_meanings="liquid ice";
+               short mw_cld_phase:flag_values=0,  1;
+
+          float h2o_liq_lay_mol_col(atrack, xtrack, lay_100);
+              string h2o_liq_lay_mol_col:units="molecules / cm2";
+              string h2o_liq_lay_mol_col:long_name="cloud liquid water profile";
+              string h2o_liq_lay_mol_col:standard_name="mass_content_of_cloud_liquid_water_in_atmosphere_layer";
+              string h2o_liq_lay_mol_col:coordinates="lon lat";
+              string h2o_liq_lay_mol_col:description="cloud liquid water column density on 100 layers";
+               float h2o_liq_lay_mol_col:_FillValue=9.9692099683868690e+36f;
+              string h2o_liq_lay_mol_col:cell_methods="area: mean";
+              string h2o_liq_lay_mol_col:coverage_content_type="physicalMeasurement";
+
+          float h2o_liq_tot(atrack, xtrack);
+              string h2o_liq_tot:units="kg / m2";
+              string h2o_liq_tot:standard_name="atmosphere_mass_content_of_cloud_liquid_water";
+               float h2o_liq_tot:_FillValue=9.9692099683868690e+36f;
+              string h2o_liq_tot:cell_methods="area: mean";
+
+          float surf_temp(atrack, xtrack);
+              string surf_temp:units="K";
+               float surf_temp:valid_range=100,  400;
+              string surf_temp:long_name="surface skin temperature";
+              string surf_temp:standard_name="surface_temperature";
+              string surf_temp:coordinates="lon lat";
+              string surf_temp:description="radiative temperature of the surface";
+               float surf_temp:_FillValue=9.9692099683868690e+36f;
+              string surf_temp:cell_methods="area: mean";
+              string surf_temp:coverage_content_type="physicalMeasurement";
+
+          float surf_temp_dof(atrack, xtrack);
+              string surf_temp_dof:units="1";
+              string surf_temp_dof:long_name="surface skin temperature DOFs";
+              string surf_temp_dof:description="surface skin temperature degrees of freedom";
+               float surf_temp_dof:_FillValue=9.9692099683868690e+36f;
+              string surf_temp_dof:coverage_content_type="qualityInformation";
+
+          ubyte surf_temp_qc(atrack, xtrack);
+              string surf_temp_qc:units="1";
+               ubyte surf_temp_qc:valid_range=0,  2;
+              string surf_temp_qc:long_name="surface skin temperature QC";
+              string surf_temp_qc:coordinates="lon lat";
+              string surf_temp_qc:description="radiative temperature of the surface QC";
+               ubyte surf_temp_qc:_FillValue=255ub;
+              string surf_temp_qc:coverage_content_type="qualityInformation";
+
+          float surf_emis_ir(atrack, xtrack, surf_freq_ir);
+              string surf_emis_ir:units="1";
+               float surf_emis_ir:valid_range=0.0,  1.0;
+              string surf_emis_ir:long_name="IR surface emissivity";
+              string surf_emis_ir:standard_name="surface_longwave_emissivity";
+              string surf_emis_ir:coordinates="lon lat";
+              string surf_emis_ir:description="infrared surface emissivity";
+              string surf_emis_ir:AIRS_name="emisir";
+               float surf_emis_ir:_FillValue=9.9692099683868690e+36f;
+              string surf_emis_ir:cell_methods="area: mean";
+              string surf_emis_ir:coverage_content_type="physicalMeasurement";
+
+          ubyte surf_emis_ir_qc(atrack, xtrack, surf_freq_ir);
+              string surf_emis_ir_qc:units="1";
+               ubyte surf_emis_ir_qc:valid_range=0,  2;
+              string surf_emis_ir_qc:long_name="IR surface emissivity QC";
+              string surf_emis_ir_qc:coordinates="lon lat";
+              string surf_emis_ir_qc:description="infrared surface emissivity QC";
+              string surf_emis_ir_qc:AIRS_name="emisir_qc";
+               ubyte surf_emis_ir_qc:_FillValue=255ub;
+              string surf_emis_ir_qc:coverage_content_type="qualityInformation";
+
+          float surf_refl_ir(atrack, xtrack, surf_freq_ir);
+              string surf_refl_ir:units="1";
+               float surf_refl_ir:valid_range=0.0,  1.0;
+              string surf_refl_ir:long_name="IR surface reflectivity";
+              string surf_refl_ir:standard_name="surface_bidirectional_reflectance";
+              string surf_refl_ir:coordinates="lon lat";
+              string surf_refl_ir:description="infrared surface reflectivity";
+              string surf_refl_ir:AIRS_name="rhoir";
+               float surf_refl_ir:_FillValue=9.9692099683868690e+36f;
+              string surf_refl_ir:cell_methods="area: mean";
+              string surf_refl_ir:coverage_content_type="physicalMeasurement";
+
+          ubyte surf_refl_ir_qc(atrack, xtrack, surf_freq_ir);
+              string surf_refl_ir_qc:units="1";
+               ubyte surf_refl_ir_qc:valid_range=0,  2;
+              string surf_refl_ir_qc:long_name="IR surface reflectivity QC";
+              string surf_refl_ir_qc:coordinates="lon lat";
+              string surf_refl_ir_qc:description="infrared surface reflectivity QC";
+              string surf_refl_ir_qc:AIRS_name="rhoir_qc";
+               ubyte surf_refl_ir_qc:_FillValue=255ub;
+              string surf_refl_ir_qc:coverage_content_type="qualityInformation";
+
+          float cld_frc(atrack, xtrack, fov, mxcld);
+              string cld_frc:units="1";
+               float cld_frc:valid_range=0.0,  1.0;
+              string cld_frc:long_name="cloud fraction";
+              string cld_frc:standard_name="cloud_area_fraction_in_atmosphere_layer";
+              string cld_frc:coordinates="fov_lon fov_lat link-to-cloud-pres-top";
+              string cld_frc:description="effective cloud fraction";
+              string cld_frc:AIRS_name="CldFrcStd";
+               float cld_frc:_FillValue=9.9692099683868690e+36f;
+              string cld_frc:cell_methods="area: mean";
+              string cld_frc:coverage_content_type="physicalMeasurement";
+
+          ubyte cld_frc_qc(atrack, xtrack, fov, mxcld);
+              string cld_frc_qc:units="1";
+               ubyte cld_frc_qc:valid_range=0,  2;
+              string cld_frc_qc:long_name="cloud fraction QC";
+              string cld_frc_qc:coordinates="fov_lon fov_lat";
+              string cld_frc_qc:description="effective cloud fraction QC";
+              string cld_frc_qc:AIRS_name="CldFrcStd_QC";
+               ubyte cld_frc_qc:_FillValue=255ub;
+              string cld_frc_qc:coverage_content_type="qualityInformation";
+
+          float cld_frc_tot(atrack, xtrack, fov);
+              string cld_frc_tot:units="1";
+               float cld_frc_tot:valid_range=0.0,  1.0;
+              string cld_frc_tot:long_name="cloud fraction total";
+              string cld_frc_tot:standard_name="cloud_area_fraction";
+              string cld_frc_tot:coordinates="fov_lon fov_lat";
+              string cld_frc_tot:description="effective cloud fraction summed over all cloud layers";
+              string cld_frc_tot:AIRS_name="(CldFrcTot was a total over all 9 FOVs as well as both layers)";
+               float cld_frc_tot:_FillValue=9.9692099683868690e+36f;
+              string cld_frc_tot:cell_methods="area: mean";
+              string cld_frc_tot:coverage_content_type="physicalMeasurement";
+
+          float cld_pres_top(atrack, xtrack, fov, mxcld);
+              string cld_pres_top:units="hPa";
+               float cld_pres_top:valid_range=10.0,  1200.0;
+              string cld_pres_top:long_name="cloud top pressure";
+              string cld_pres_top:standard_name="pressure_at_effective_cloud_top_defined_by_infrared_radiation";
+              string cld_pres_top:coordinates="fov_lon fov_lat";
+              string cld_pres_top:description="cloud top pressure";
+              string cld_pres_top:AIRS_name="PCldTop";
+               float cld_pres_top:_FillValue=9.9692099683868690e+36f;
+              string cld_pres_top:cell_methods="area: mean";
+              string cld_pres_top:coverage_content_type="physicalMeasurement";
+
+          ubyte cld_pres_top_qc(atrack, xtrack, fov, mxcld);
+              string cld_pres_top_qc:units="1";
+               ubyte cld_pres_top_qc:valid_range=0,  2;
+              string cld_pres_top_qc:long_name="cloud top pressure QC";
+              string cld_pres_top_qc:coordinates="fov_lon fov_lat";
+              string cld_pres_top_qc:description="cloud top pressure QC";
+              string cld_pres_top_qc:AIRS_name="PCldTop_QC";
+               ubyte cld_pres_top_qc:_FillValue=255ub;
+              string cld_pres_top_qc:coverage_content_type="qualityInformation";
+
+          float cld_temp_top(atrack, xtrack, fov, mxcld);
+              string cld_temp_top:units="hPa";
+               float cld_temp_top:valid_range=10.0,  1200.0;
+              string cld_temp_top:long_name="cloud top temperature";
+              string cld_temp_top:standard_name="air_temperature_at_effective_cloud_top_defined_by_infrared_radiation";
+              string cld_temp_top:coordinates="fov_lon fov_lat";
+              string cld_temp_top:description="cloud top temperature";
+              string cld_temp_top:AIRS_name="TCldTop";
+               float cld_temp_top:_FillValue=9.9692099683868690e+36f;
+              string cld_temp_top:cell_methods="area: mean";
+              string cld_temp_top:coverage_content_type="physicalMeasurement";
+
+          ubyte cld_temp_top_qc(atrack, xtrack, fov, mxcld);
+              string cld_temp_top_qc:units="1";
+               ubyte cld_temp_top_qc:valid_range=0,  2;
+              string cld_temp_top_qc:long_name="cloud top temperature QC";
+              string cld_temp_top_qc:coordinates="fov_lon fov_lat";
+              string cld_temp_top_qc:description="cloud top temperature QC";
+              string cld_temp_top_qc:AIRS_name="PCldTop_QC";
+               ubyte cld_temp_top_qc:_FillValue=255ub;
+              string cld_temp_top_qc:coverage_content_type="qualityInformation";
+
+          float olr(atrack, xtrack, fov);
+              string olr:units="W / m2";
+               float olr:valid_range=1.0,  2000.0;
+              string olr:long_name="outgoing longwave radiation";
+              string olr:standard_name="toa_outgoing_longwave_flux";
+              string olr:coordinates="fov_lon fov_lat";
+              string olr:description="outgoing longwave radiation flux integrated over 2 to 2800 cm-1";
+              string olr:AIRS_name="olr";
+               float olr:_FillValue=9.9692099683868690e+36f;
+              string olr:cell_methods="area: mean";
+              string olr:coverage_content_type="physicalMeasurement";
+
+          ubyte olr_qc(atrack, xtrack, fov);
+              string olr_qc:units="1";
+               ubyte olr_qc:valid_range=0,  2;
+              string olr_qc:long_name="outgoing longwave radiation QC";
+              string olr_qc:coordinates="fov_lon fov_lat";
+              string olr_qc:description="outgoing longwave radiation flux QC";
+               ubyte olr_qc:_FillValue=255ub;
+              string olr_qc:coverage_content_type="qualityInformation";
+
+          float olr_band(atrack, xtrack, fov, olr_freq);
+              string olr_band:units="W / m2";
+               float olr_band:valid_range=1.0,  2000.0;
+              string olr_band:long_name="outgoing longwave radiation per band";
+              string olr_band:standard_name="toa_outgoing_longwave_flux";
+              string olr_band:coordinates="fov_lon fov_lat";
+              string olr_band:description="outgoing longwave radiation flux per band";
+              string olr_band:AIRS_name="spectralolr (only per FOR)";
+               float olr_band:_FillValue=9.9692099683868690e+36f;
+              string olr_band:cell_methods="area: mean";
+              string olr_band:coverage_content_type="physicalMeasurement";
+
+          float olr_clr(atrack, xtrack);
+              string olr_clr:units="W / m2";
+               float olr_clr:valid_range=1.0,  2000.0;
+              string olr_clr:long_name="clear outgoing longwave radiation";
+              string olr_clr:standard_name="toa_outgoing_longwave_flux_assuming_clear_sky";
+              string olr_clr:coordinates="lon lat";
+              string olr_clr:description="clear-sky outgoing longwave radiation flux integrated over 2 to 2800 cm-1";
+              string olr_clr:AIRS_name="clrolr";
+               float olr_clr:_FillValue=9.9692099683868690e+36f;
+              string olr_clr:cell_methods="area: mean";
+              string olr_clr:coverage_content_type="physicalMeasurement";
+
+          ubyte olr_clr_qc(atrack, xtrack);
+              string olr_clr_qc:units="1";
+               ubyte olr_clr_qc:valid_range=0,  2;
+              string olr_clr_qc:long_name="clear outgoing longwave radiation QC";
+              string olr_clr_qc:coordinates="lon lat";
+              string olr_clr_qc:description="clear-sky outgoing longwave radiation QC";
+               ubyte olr_clr_qc:_FillValue=255ub;
+              string olr_clr_qc:coverage_content_type="qualityInformation";
+
+          float olr_clr_band(atrack, xtrack, olr_freq);
+              string olr_clr_band:units="W / m2";
+               float olr_clr_band:valid_range=1.0,  2000.0;
+              string olr_clr_band:long_name="clear outgoing longwave radiation per band";
+              string olr_clr_band:standard_name="toa_outgoing_longwave_flux";
+              string olr_clr_band:coordinates="fov_lon fov_lat";
+              string olr_clr_band:description="clear-sky outgoing longwave radiation flux per band";
+              string olr_clr_band:AIRS_name="spectralclrolr";
+               float olr_clr_band:_FillValue=9.9692099683868690e+36f;
+              string olr_clr_band:cell_methods="area: mean";
+              string olr_clr_band:coverage_content_type="physicalMeasurement";
+
+          float surf_pres(atrack, xtrack);
+              string surf_pres:units="hPa";
+               float surf_pres:valid_range=100.0,  1200.0;
+              string surf_pres:long_name="surface pressure";
+              string surf_pres:standard_name="surface_air_pressure";
+              string surf_pres:coordinates="lon lat";
+              string surf_pres:description="surface pressure";
+               float surf_pres:_FillValue=9.9692099683868690e+36f;
+              string surf_pres:cell_methods="area: mean";
+              string surf_pres:coverage_content_type="modelResult";
+
+          float sea_lev_pres(atrack, xtrack);
+              string sea_lev_pres:units="hPa";
+               float sea_lev_pres:valid_range=700.0,  1200.0;
+              string sea_lev_pres:long_name="sea level surface pressure";
+              string sea_lev_pres:standard_name="air_pressure_at_sea_level";
+              string sea_lev_pres:coordinates="lon lat";
+              string sea_lev_pres:description="sea level surface pressure";
+               float sea_lev_pres:_FillValue=9.9692099683868690e+36f;
+              string sea_lev_pres:cell_methods="area: mean";
+              string sea_lev_pres:coverage_content_type="modelResult";
+
+          short surf_indx(atrack, xtrack);
+              string surf_indx:units="1";
+               short surf_indx:valid_range=0,  100;
+              string surf_indx:long_name="surface layer";
+              string surf_indx:coordinates="lon lat";
+              string surf_indx:description="index of the last pressure layer used in retrieval";
+               short surf_indx:_FillValue=-32767s;
+              string surf_indx:coverage_content_type="modelResult";
+
+          float lev_100(lev_100);
+              string lev_100:units="hPa";
+               float lev_100:valid_range=0.0,  1200.0;
+              string lev_100:long_name="pressure levels";
+              string lev_100:standard_name="air_pressure";
+              string lev_100:axis="Z";
+              string lev_100:description="pressure levels";
+               float lev_100:_FillValue=9.9692099683868690e+36f;
+              string lev_100:coverage_content_type="coordinate";
+
+          float lay_100(lay_100);
+              string lay_100:units="hPa";
+              string lay_100:long_name="Mid-layer pressures";
+              string lay_100:standard_name="air_pressure";
+              string lay_100:axis="Z";
+              string lay_100:description="pressure at the middle of each layer";
+               float lay_100:_FillValue=9.9692099683868690e+36f;
+              string lay_100:coverage_content_type="coordinate";
+              string lay_100:bounds="lay_100_bnds";
+
+          float lay_100_bnds(lay_100, bnds_1d);
+              string lay_100_bnds:units="hPa";
+              string lay_100_bnds:long_name="Pressure layer boundaries";
+              string lay_100_bnds:description="Min and max pressure of each layer";
+               float lay_100_bnds:_FillValue=9.9692099683868690e+36f;
+              string lay_100_bnds:cell_methods="TBD";
+
+          short nemis(atrack, xtrack);
+              string nemis:units="1";
+               short nemis:valid_range=1,  100;
+              string nemis:long_name="number of emissivities";
+              string nemis:coordinates="lon lat";
+              string nemis:description="Number of surface emissivity hinge points";
+               short nemis:_FillValue=-32767s;
+              string nemis:coverage_content_type="referenceInformation";
+
+          float freqemis(atrack, xtrack, surf_freq_ir);
+              string freqemis:units="cm-1";
+               float freqemis:valid_range=500.0,  3000.0;
+              string freqemis:long_name="surface emissivity frequencies";
+              string freqemis:standard_name="radiation_frequency";
+              string freqemis:coordinates="lon lat";
+              string freqemis:description="surface emissivity frequencies (hinge points)";
+               float freqemis:_FillValue=9.9692099683868690e+36f;
+              string freqemis:coverage_content_type="coordinate";
+
+          float olr_freq(olr_freq);
+              string olr_freq:units="cm-1";
+              string olr_freq:long_name="OLR frequency band centers";
+              string olr_freq:standard_name="radiation_frequency";
+              string olr_freq:description="OLR frequency band centers";
+               float olr_freq:_FillValue=9.9692099683868690e+36f;
+              string olr_freq:coverage_content_type="coordinate";
+              string olr_freq:bounds="olr_freq_bnds";
+
+          float olr_freq_bnds(olr_freq, bnds_1d);
+              string olr_freq_bnds:units="cm-1";
+              string olr_freq_bnds:long_name="OLR frequency band boundaries";
+              string olr_freq_bnds:standard_name="radiation_frequency";
+              string olr_freq_bnds:description="min and max frequency of each OLR band";
+               float olr_freq_bnds:_FillValue=9.9692099683868690e+36f;
+
+          float co2ppmv(atrack, xtrack);
+              string co2ppmv:units="ppmv";
+               float co2ppmv:valid_range=100.0,  1000.0;
+              string co2ppmv:long_name="CO2";
+              string co2ppmv:coordinates="lon lat";
+              string co2ppmv:description="Assumed carbon dioxide concentration";
+               float co2ppmv:_FillValue=9.9692099683868690e+36f;
+              string co2ppmv:coverage_content_type="modelResult";
+
+          short mw_surf_class(atrack, xtrack);
+              string mw_surf_class:units="1";
+               short mw_surf_class:valid_range=0,  7;
+              string mw_surf_class:long_name="MW surface class";
+              string mw_surf_class:coordinates="lon lat";
+              string mw_surf_class:description="spectral microwave surface class.  0 for coastline; 1 for land; 2 for ocean; 3 for first-year sea-ice; 4 for multi-year sea-ice; 5 for snow(higher-freq scattering); 6 for glacier/snow (very low-freq scattering); 7 for snow(lower-freq scattering);";
+              string mw_surf_class:AIRS_name="surfclass";
+               short mw_surf_class:_FillValue=-32767s;
+              string mw_surf_class:coverage_content_type="thematicClassification";
+              string mw_surf_class:flag_meanings="coast land ocean first_yr_sea_ice multi_yr_sea_ice snow_hi_freq glacier_snow snow_lo_freq";
+               short mw_surf_class:flag_values=0,  1,  2,  3,  4,  5,  6,  7;
+
+
+     group: aux  {
+     variables:
+              string idprof(atrack, xtrack);
+                   string idprof:units="1";
+                   string idprof:long_name="profile ID";
+                   string idprof:coordinates="lon lat";
+                   string idprof:description="profile ID";
+                   string idprof:coverage_content_type="referenceInformation";
+
+               float nn_ta(atrack, xtrack, lev_100);
+                   string nn_ta:units="K";
+                    float nn_ta:valid_range=100,  400;
+                   string nn_ta:long_name="NN air temperature profile";
+                   string nn_ta:coordinates="lon lat";
+                   string nn_ta:description="air temperature profile on 101 levels from the neural net first guess";
+                    float nn_ta:_FillValue=9.9692099683868690e+36f;
+                   string nn_ta:coverage_content_type="physicalMeasurement";
+
+               float nn_h2ocd(atrack, xtrack, lay_100);
+                   string nn_h2ocd:units="molecules / cm2";
+                   string nn_h2ocd:long_name="NN water vapor profile";
+                   string nn_h2ocd:coordinates="lon lat";
+                   string nn_h2ocd:description="water vapor column density on 100 layers from the neural net first guess";
+                    float nn_h2ocd:_FillValue=9.9692099683868690e+36f;
+                   string nn_h2ocd:coverage_content_type="physicalMeasurement";
+
+               float nn_nsat(atrack, xtrack);
+                   string nn_nsat:units="K";
+                    float nn_nsat:valid_range=100,  400;
+                   string nn_nsat:long_name="NN near-surface temperature";
+                   string nn_nsat:coordinates="lon lat";
+                   string nn_nsat:description="near-surface air temperature (~2 meters above surface) from the neural net first guess";
+                    float nn_nsat:_FillValue=9.9692099683868690e+36f;
+                   string nn_nsat:coverage_content_type="physicalMeasurement";
+
+               float nn_sst(atrack, xtrack);
+                   string nn_sst:units="K";
+                    float nn_sst:valid_range=100,  400;
+                   string nn_sst:long_name="NN surface skin temperature";
+                   string nn_sst:coordinates="lon lat";
+                   string nn_sst:description="radiative temperature of the surface from the neural net first guess";
+                    float nn_sst:_FillValue=9.9692099683868690e+36f;
+                   string nn_sst:coverage_content_type="physicalMeasurement";
+
+               float nn_olr(atrack, xtrack);
+                   string nn_olr:units="Watts/meter2";
+                    float nn_olr:valid_range=1.0,  2000.0;
+                   string nn_olr:long_name="NN outgoing longwave radiation";
+                   string nn_olr:coordinates="lon lat";
+                   string nn_olr:description="outgoing longwave radiation flux integrated over 2 to 2800 cm-1 from the neural net first guess.  Suspect because no cloud retrieval contributed.";
+                    float nn_olr:_FillValue=9.9692099683868690e+36f;
+                   string nn_olr:coverage_content_type="physicalMeasurement";
+
+               float nn_clrolr(atrack, xtrack);
+                   string nn_clrolr:units="Watts/meter2";
+                    float nn_clrolr:valid_range=1.0,  2000.0;
+                   string nn_clrolr:long_name="NN clear outgoing longwave radiation";
+                   string nn_clrolr:coordinates="lon lat";
+                   string nn_clrolr:description="clear-sky outgoing longwave radiation flux integrated over 2 to 2800 cm-1 from the neural net first guess";
+                    float nn_clrolr:_FillValue=9.9692099683868690e+36f;
+                   string nn_clrolr:coverage_content_type="physicalMeasurement";
+
+               float clim_o3cd(atrack, xtrack, lay_100);
+                   string clim_o3cd:units="molecules / cm2";
+                   string clim_o3cd:long_name="climatology ozone profile";
+                   string clim_o3cd:coordinates="lon lat";
+                   string clim_o3cd:description="water vapor column density on 100 layers from the climatology first guess";
+                    float clim_o3cd:_FillValue=9.9692099683868690e+36f;
+                   string clim_o3cd:coverage_content_type="modelResult";
+
+               float fg_emisir(atrack, xtrack, surf_freq_ir);
+                   string fg_emisir:units="1";
+                    float fg_emisir:valid_range=0.0,  1.0;
+                   string fg_emisir:long_name="FG infrared surface emissivity";
+                   string fg_emisir:coordinates="lon lat";
+                   string fg_emisir:description="infrared surface emissivity from the first guess";
+                    float fg_emisir:_FillValue=9.9692099683868690e+36f;
+                   string fg_emisir:coverage_content_type="modelResult";
+
+               float fg_rhoir(atrack, xtrack, surf_freq_ir);
+                   string fg_rhoir:units="1";
+                    float fg_rhoir:valid_range=0.0,  1.0;
+                   string fg_rhoir:long_name="FG infrared surface reflectivity";
+                   string fg_rhoir:coordinates="lon lat";
+                   string fg_rhoir:description="infrared surface reflectivity from the first guess";
+                    float fg_rhoir:_FillValue=9.9692099683868690e+36f;
+                   string fg_rhoir:coverage_content_type="modelResult";
+
+               short fg_nemis(atrack, xtrack);
+                   string fg_nemis:units="1";
+                    short fg_nemis:valid_range=1,  100;
+                   string fg_nemis:long_name="FG number of emissivities";
+                   string fg_nemis:coordinates="lon lat";
+                   string fg_nemis:description="Number of surface emissivity hinge points from the first guess";
+                    short fg_nemis:_FillValue=-32767s;
+                   string fg_nemis:coverage_content_type="referenceInformation";
+
+               float fg_freqemis(atrack, xtrack, surf_freq_ir);
+                   string fg_freqemis:units="cm-1";
+                    float fg_freqemis:valid_range=500.0,  3000.0;
+                   string fg_freqemis:long_name="FG surface emissivity frequencies";
+                   string fg_freqemis:coordinates="lon lat";
+                   string fg_freqemis:description="surface emissivity frequencies (hinge points) from the first guess";
+                    float fg_freqemis:_FillValue=9.9692099683868690e+36f;
+                   string fg_freqemis:coverage_content_type="coordinate";
+
+               float mw_ta(atrack, xtrack, lev_100);
+                   string mw_ta:units="K";
+                    float mw_ta:valid_range=100,  400;
+                   string mw_ta:long_name="MW-only air temperature profile";
+                   string mw_ta:coordinates="lon lat";
+                   string mw_ta:description="air temperature profile on 101 levels from the MW-only first guess";
+                    float mw_ta:_FillValue=9.9692099683868690e+36f;
+                   string mw_ta:coverage_content_type="physicalMeasurement";
+
+               float mw_h2ocd(atrack, xtrack, lay_100);
+                   string mw_h2ocd:units="molecules / cm2";
+                   string mw_h2ocd:long_name="MW-only water vapor profile";
+                   string mw_h2ocd:coordinates="lon lat";
+                   string mw_h2ocd:description="water vapor column density on 100 layers from the MW-only first guess";
+                    float mw_h2ocd:_FillValue=9.9692099683868690e+36f;
+                   string mw_h2ocd:coverage_content_type="physicalMeasurement";
+
+               float mw_nsat(atrack, xtrack);
+                   string mw_nsat:units="K";
+                    float mw_nsat:valid_range=100,  400;
+                   string mw_nsat:long_name="MW-only near-surface temperature";
+                   string mw_nsat:coordinates="lon lat";
+                   string mw_nsat:description="near-surface air temperature (~2 meters above surface) from the MW-only first guess";
+                    float mw_nsat:_FillValue=9.9692099683868690e+36f;
+                   string mw_nsat:coverage_content_type="physicalMeasurement";
+
+               float mw_sst(atrack, xtrack);
+                   string mw_sst:units="K";
+                    float mw_sst:valid_range=100,  400;
+                   string mw_sst:long_name="MW-only surface skin temperature";
+                   string mw_sst:coordinates="lon lat";
+                   string mw_sst:description="radiative temperature of the surface from the MW-only first guess";
+                    float mw_sst:_FillValue=9.9692099683868690e+36f;
+                   string mw_sst:coverage_content_type="physicalMeasurement";
+
+               float pbest(atrack, xtrack);
+                   string pbest:units="hPa";
+                    float pbest:valid_range=0.0,  1200.0;
+                   string pbest:long_name="best QC bottom";
+                   string pbest:coordinates="lon lat";
+                   string pbest:description="Maximum value of pressure for which temperature is Quality = 0";
+                    float pbest:_FillValue=9.9692099683868690e+36f;
+                   string pbest:coverage_content_type="qualityInformation";
+
+               float pgood(atrack, xtrack);
+                   string pgood:units="hPa";
+                    float pgood:valid_range=0.0,  1200.0;
+                   string pgood:long_name="good QC bottom";
+                   string pgood:coordinates="lon lat";
+                   string pgood:description="Maximum value of pressure for which temperature is Quality = 0 or 1";
+                    float pgood:_FillValue=9.9692099683868690e+36f;
+                   string pgood:coverage_content_type="qualityInformation";
+
+               short nbest(atrack, xtrack);
+                   string nbest:units="1";
+                    short nbest:valid_range=0,  100;
+                   string nbest:long_name="best QC bottom index";
+                   string nbest:coordinates="lon lat";
+                   string nbest:description="level index of highest pressure (i.e. lowest altitude) for which Quality = 0.  A value of 0 indicates that no part of the profile passes the test.";
+                    short nbest:_FillValue=-32767s;
+                   string nbest:coverage_content_type="qualityInformation";
+
+               short ngood(atrack, xtrack);
+                   string ngood:units="1";
+                    short ngood:valid_range=0,  100;
+                   string ngood:long_name="good QC bottom index";
+                   string ngood:coordinates="lon lat";
+                   string ngood:description="level index of highest pressure (i.e. lowest altitude) for which Quality = 0 or 1.  A value of 0 indicates that no part of the profile passes the test.";
+                    short ngood:_FillValue=-32767s;
+                   string ngood:coverage_content_type="qualityInformation";
+
+     } // aux
+
+
+     group: col_den  {
+     variables:
+               float h2o_vap_lay_mol_col(atrack, xtrack, lay_100);
+                   string h2o_vap_lay_mol_col:units="molecules / cm2";
+                   string h2o_vap_lay_mol_col:ancillary_variables="h2o_vap_lay_mol_col_qc h2o_vap_lay_mol_col_err";
+                   string h2o_vap_lay_mol_col:long_name="water vapor profile";
+                   string h2o_vap_lay_mol_col:coordinates="lon lat";
+                   string h2o_vap_lay_mol_col:description="water vapor column density on 100 layers";
+                   string h2o_vap_lay_mol_col:AIRS_name="H2OCDSup";
+                    float h2o_vap_lay_mol_col:_FillValue=9.9692099683868690e+36f;
+                   string h2o_vap_lay_mol_col:cell_methods="area: mean";
+                   string h2o_vap_lay_mol_col:coverage_content_type="physicalMeasurement";
+
+               ubyte h2o_vap_lay_mol_col_qc(atrack, xtrack, lay_100);
+                   string h2o_vap_lay_mol_col_qc:units="1";
+                    ubyte h2o_vap_lay_mol_col_qc:valid_range=0,  2;
+                   string h2o_vap_lay_mol_col_qc:long_name="h2o_vap_lay_mol_col QC";
+                   string h2o_vap_lay_mol_col_qc:coordinates="lon lat";
+                   string h2o_vap_lay_mol_col_qc:description="h2o_vap_lay_mol_col QC flag";
+                   string h2o_vap_lay_mol_col_qc:AIRS_name="H2OCDSup_QC";
+                    ubyte h2o_vap_lay_mol_col_qc:_FillValue=255ub;
+                   string h2o_vap_lay_mol_col_qc:coverage_content_type="qualityInformation";
+                   string h2o_vap_lay_mol_col_qc:flag_meanings="Best Good Do_Not_Use";
+                    ubyte h2o_vap_lay_mol_col_qc:flag_values=0,  1,  2;
+
+               float h2o_vap_lay_mol_col_err(atrack, xtrack, lay_100);
+                   string h2o_vap_lay_mol_col_err:units="molecules / cm2";
+                   string h2o_vap_lay_mol_col_err:long_name="h2o_vap_lay_mol_col error estimate";
+                   string h2o_vap_lay_mol_col_err:coordinates="lon lat";
+                   string h2o_vap_lay_mol_col_err:description="h2o_vap_lay_mol_col error estimate";
+                   string h2o_vap_lay_mol_col_err:AIRS_name="H2OCDSupErr";
+                    float h2o_vap_lay_mol_col_err:_FillValue=9.9692099683868690e+36f;
+                   string h2o_vap_lay_mol_col_err:coverage_content_type="qualityInformation";
+
+               float o3_lay_mol_col(atrack, xtrack, lay_100);
+                   string o3_lay_mol_col:units="molecules / cm2";
+                   string o3_lay_mol_col:long_name="ozone profile";
+                   string o3_lay_mol_col:coordinates="lon lat";
+                   string o3_lay_mol_col:description="ozone column density on 100 layers";
+                   string o3_lay_mol_col:AIRS_name="O3CDSup";
+                    float o3_lay_mol_col:_FillValue=9.9692099683868690e+36f;
+                   string o3_lay_mol_col:cell_methods="area: mean";
+                   string o3_lay_mol_col:coverage_content_type="physicalMeasurement";
+
+               ubyte o3_lay_mol_col_qc(atrack, xtrack, lay_100);
+                   string o3_lay_mol_col_qc:units="1";
+                    ubyte o3_lay_mol_col_qc:valid_range=0,  2;
+                   string o3_lay_mol_col_qc:long_name="ozone profile QC";
+                   string o3_lay_mol_col_qc:coordinates="lon lat";
+                   string o3_lay_mol_col_qc:description="ozone column density QC";
+                   string o3_lay_mol_col_qc:AIRS_name="O3CDSup_QC";
+                    ubyte o3_lay_mol_col_qc:_FillValue=255ub;
+                   string o3_lay_mol_col_qc:coverage_content_type="qualityInformation";
+
+               float co_lay_mol_col(atrack, xtrack, lay_100);
+                   string co_lay_mol_col:units="molecules / cm2";
+                   string co_lay_mol_col:long_name="CO profile";
+                   string co_lay_mol_col:coordinates="lon lat";
+                   string co_lay_mol_col:description="Carbon monoxide column density on 100 layers";
+                   string co_lay_mol_col:AIRS_name="COCDSup";
+                    float co_lay_mol_col:_FillValue=9.9692099683868690e+36f;
+                   string co_lay_mol_col:coverage_content_type="physicalMeasurement";
+
+               ubyte co_lay_mol_col_qc(atrack, xtrack, lay_100);
+                   string co_lay_mol_col_qc:units="1";
+                    ubyte co_lay_mol_col_qc:valid_range=0,  2;
+                   string co_lay_mol_col_qc:long_name="CO profile QC";
+                   string co_lay_mol_col_qc:coordinates="lon lat";
+                   string co_lay_mol_col_qc:description="Carbon monoxide column density QC";
+                   string co_lay_mol_col_qc:AIRS_name="COCDSup_QC";
+                    ubyte co_lay_mol_col_qc:_FillValue=255ub;
+                   string co_lay_mol_col_qc:coverage_content_type="qualityInformation";
+
+               float ch4_lay_mol_col(atrack, xtrack, lay_100);
+                   string ch4_lay_mol_col:units="molecules / cm2";
+                   string ch4_lay_mol_col:long_name="Methane profile";
+                   string ch4_lay_mol_col:coordinates="lon lat";
+                   string ch4_lay_mol_col:description="Methane column density on 100 layers";
+                   string ch4_lay_mol_col:AIRS_name="CH4CDSup";
+                    float ch4_lay_mol_col:_FillValue=9.9692099683868690e+36f;
+                   string ch4_lay_mol_col:cell_methods="area: mean";
+                   string ch4_lay_mol_col:coverage_content_type="physicalMeasurement";
+
+               ubyte ch4_lay_mol_col_qc(atrack, xtrack, lay_100);
+                   string ch4_lay_mol_col_qc:units="1";
+                    ubyte ch4_lay_mol_col_qc:valid_range=0,  2;
+                   string ch4_lay_mol_col_qc:long_name="Methane profile QC";
+                   string ch4_lay_mol_col_qc:coordinates="lon lat";
+                   string ch4_lay_mol_col_qc:description="Methane column density QC";
+                   string ch4_lay_mol_col_qc:AIRS_name="CH4CDSup_QC";
+                    ubyte ch4_lay_mol_col_qc:_FillValue=255ub;
+                   string ch4_lay_mol_col_qc:coverage_content_type="qualityInformation";
+
+     } // col_den
+} // l2_gsfc_crimss
+
