@@ -393,7 +393,7 @@ for ((fl_idx=0;fl_idx<fl_nbr;fl_idx++)); do
 #    if false; then
     printf "\nTest 2: Check character set of group, dimension, variable, and attribute names ...\n"
     printf "Recommendation: Such names shall comply with this regular expression: [A-Za-z][A-Za-z0-9_]*\n"
-    printf "URL: https://wiki.earthdata.nasa.gov/display/ESDSWG/Character+Set+for+User-Defined+Group%2C+Variable%2C+and+Attribute+names\n"
+    echo "URL: https://wiki.earthdata.nasa.gov/display/ESDSWG/Character+Set+for+User-Defined+Group%2C+Variable%2C+and+Attribute+names"
     [[ ${dbg_lvl} -ge 0 ]] && date_chr=$(date +"%s")
     var_lst=`ncvarlst ${fl_in[${fl_idx}]}`
     dmn_lst=`ncdmnlst ${fl_in[${fl_idx}]}`
