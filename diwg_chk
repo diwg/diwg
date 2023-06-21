@@ -45,7 +45,6 @@ spt_pid=$$ # [nbr] Script PID (process ID)
 # diwg_chk ~/nco/data/in.nc ~/nco/data/in_4.nc 
 # diwg_chk ~/data/bm/elmv2_ne30pg2l15.nc
 # diwg_chk ~/data/hdf/MODIS_L2N_20140304T1120.nc > ~/diwg.txt 2>&1 &
-# diwg_chk ~/data/hdf/ > ~/diwg.txt 2>&1 &
 # diwg_chk ~/data/hdf/OMI-Aura_L2-OMAERUV_2013m1004t2338-o49057_v003-2013m1005t053932.nc
 
 # Production usage:
@@ -363,8 +362,8 @@ for ((fl_idx=0;fl_idx<fl_nbr;fl_idx++)); do
     printf "\nChecking file #${fl_idx}: ${fl_in[${fl_idx}]} ...\n"
     
     printf "\nTest 1: NaN-check ...\n"
-    printf "Recommendation: Earth Science data products should not store NaN in any field values, nor as an indicator of missing or invalid data.\n"
-    printf "URL: https://wiki.earthdata.nasa.gov/pages/viewpage.action?pageId=62818058\n"
+    printf "Recommendation: Earth Science data products should avoid using Not-a-Number (NaN) in any field values or as an indicator of missing or invalid data\n"
+    printf "URL: https://wiki.earthdata.nasa.gov/display/ESDSWG/Not-a-Number+%28NaN%29+Value\n"
     [[ ${dbg_lvl} -ge 0 ]] && date_nan=$(date +"%s")
     cmd_nan[${fl_idx}]="ncks --dbg_lvl=${dbg_lvl} --chk_nan ${fl_in[${fl_idx}]}"
 
@@ -391,10 +390,10 @@ for ((fl_idx=0;fl_idx<fl_nbr;fl_idx++)); do
 	echo "Elapsed time for NaN-check = $((date_dff/60))m$((date_dff % 60))s"
     fi # !dbg
 
-    if false; then
+#    if false; then
     printf "\nTest 2: Check character set of group, dimension, variable, and attribute names ...\n"
     printf "Recommendation: Such names shall comply with this regular expression: [A-Za-z][A-Za-z0-9_]*\n"
-    printf "URL: https://wiki.earthdata.nasa.gov/pages/viewpage.action?pageId=78978073\n"
+    printf "URL: https://wiki.earthdata.nasa.gov/display/ESDSWG/Character+Set+for+User-Defined+Group%2C+Variable%2C+and+Attribute+names\n"
     [[ ${dbg_lvl} -ge 0 ]] && date_chr=$(date +"%s")
     var_lst=`ncvarlst ${fl_in[${fl_idx}]}`
     dmn_lst=`ncdmnlst ${fl_in[${fl_idx}]}`
@@ -403,10 +402,16 @@ for ((fl_idx=0;fl_idx<fl_nbr;fl_idx++)); do
 #    echo "dmn_lst = ${dmn_lst}"
 #    if [[ "${var_lst}" =~ ^(.*)([0-9][0-9][0-9][0-9][01][0-9].nc.?)$ ]]; then
     declare -a var
-    read -r ${var} <<< "${var_lst}"
+    IFS=$'\n' read -r -a var <<< "${var_lst}"
     let var_nbr=${#var[@]}
     echo "var_nbr = ${var_nbr}"
     echo "var = ${var}"
+
+    declare -a dmn
+    IFS=$'\n' read -r -a dmn <<< "${dmn_lst}"
+    let dmn_nbr=${#dmn[@]}
+    echo "dmn_nbr = ${dmn_nbr}"
+    echo "dmn = ${dmn}"
 
     if [[ "${var_lst}" =~ [A-Za-z][A-Za-z0-9_]* ]]; then
 	echo "var_lst SUCCESS"
@@ -438,7 +443,7 @@ for ((fl_idx=0;fl_idx<fl_nbr;fl_idx++)); do
 	date_dff=$((date_crr-date_chr))
 	echo "Elapsed time for character-set check = $((date_dff/60))m$((date_dff % 60))s"
     fi # !dbg
-    fi # !false
+#    fi # !false
     
 done # !fl_idx
 
