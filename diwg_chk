@@ -363,7 +363,7 @@ for ((fl_idx=0;fl_idx<fl_nbr;fl_idx++)); do
     
     printf "\nTest 1: NaN-check ...\n"
     printf "Recommendation: Earth Science data products should avoid using Not-a-Number (NaN) in any field values or as an indicator of missing or invalid data\n"
-    printf "URL: https://wiki.earthdata.nasa.gov/display/ESDSWG/Not-a-Number+%28NaN%29+Value\n"
+    echo "URL: https://wiki.earthdata.nasa.gov/display/ESDSWG/Not-a-Number+%28NaN%29+Value"
     [[ ${dbg_lvl} -ge 0 ]] && date_nan=$(date +"%s")
     cmd_nan[${fl_idx}]="ncks --dbg_lvl=${dbg_lvl} --chk_nan ${fl_in[${fl_idx}]}"
 
@@ -395,31 +395,8 @@ for ((fl_idx=0;fl_idx<fl_nbr;fl_idx++)); do
     printf "Recommendation: Such names shall comply with this regular expression: [A-Za-z][A-Za-z0-9_]*\n"
     echo "URL: https://wiki.earthdata.nasa.gov/display/ESDSWG/Character+Set+for+User-Defined+Group%2C+Variable%2C+and+Attribute+names"
     [[ ${dbg_lvl} -ge 0 ]] && date_chr=$(date +"%s")
-    var_lst=`ncvarlst ${fl_in[${fl_idx}]}`
-    dmn_lst=`ncdmnlst ${fl_in[${fl_idx}]}`
-#    att_lst=`ncattlst ${fl_in[${fl_idx}]}`
-#    echo "var_lst = ${var_lst}"
-#    echo "dmn_lst = ${dmn_lst}"
-#    if [[ "${var_lst}" =~ ^(.*)([0-9][0-9][0-9][0-9][01][0-9].nc.?)$ ]]; then
-    declare -a var
-    IFS=$'\n' read -r -a var <<< "${var_lst}"
-    let var_nbr=${#var[@]}
-    echo "var_nbr = ${var_nbr}"
-    echo "var = ${var}"
 
-    declare -a dmn
-    IFS=$'\n' read -r -a dmn <<< "${dmn_lst}"
-    let dmn_nbr=${#dmn[@]}
-    echo "dmn_nbr = ${dmn_nbr}"
-    echo "dmn = ${dmn}"
-
-    if [[ "${var_lst}" =~ [A-Za-z][A-Za-z0-9_]* ]]; then
-	echo "var_lst SUCCESS"
-    else
-	echo "var_lst FAILURE"
-    fi # !var_lst
-
-    cmd_chr[${fl_idx}]="ncks --dbg_lvl=${dbg_lvl} --chk_nan ${fl_in[${fl_idx}]}"
+    cmd_chr[${fl_idx}]="ncks --dbg_lvl=${dbg_lvl} --chk_chr ${fl_in[${fl_idx}]}"
 
     if [ ${dbg_lvl} -ge 1 ]; then
 	echo ${cmd_chr[${fl_idx}]}
@@ -434,7 +411,7 @@ for ((fl_idx=0;fl_idx<fl_nbr;fl_idx++)); do
 	    fi # !err
 	else # !par_opt
 	    eval ${cmd_chr[${fl_idx}]} ${par_opt} # eval always returns 0 on backgrounded processes
-	    nan_pid[${fl_idx}]=$!
+	    chr_pid[${fl_idx}]=$!
 	fi # !par_opt
     fi # !dbg
 
