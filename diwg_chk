@@ -447,7 +447,7 @@ for ((fl_idx=0;fl_idx<fl_nbr;fl_idx++)); do
 done # !fl_idx
 
 date_end=$(date +"%s")
-if [ ${dbg_lvl} -ge 1 ]; then
+if [ ${dbg_lvl} -ge 0 ]; then
     printf "\nCompleted DIWG Compliance Checker at `date`\n"
     date_dff=$((date_end-date_srt))
     echo "Elapsed time $((date_dff/60))m$((date_dff % 60))s"
