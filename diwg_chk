@@ -313,7 +313,6 @@ if [ ${dbg_lvl} -ge 2 ]; then
     printf "dbg: mpi_nbr = ${mpi_nbr}\n"
     printf "dbg: nco_opt = ${nco_opt}\n"
     printf "dbg: var_lst = ${var_lst}\n"
-    printf "dbg: var_nbr = ${var_nbr}\n"
     printf "dbg: xcl_flg = ${xcl_flg}\n"
 fi # !dbg
 if [ ${dbg_lvl} -ge 2 ]; then
@@ -330,12 +329,6 @@ if [ ${dbg_lvl} -ge 2 ]; then
 	    printf "dbg: fl_in[${fl_idx}] = ${fl_in[${fl_idx}]}\n"
 	done # !fl_idx
     fi # !fl_nbr
-    if [ "${var_nbr}" -ge 1 ]; then
-	printf "dbg: Processing ${var_nbr} ERA5 raw input files:\n"
-	for ((var_idx=0;var_idx<var_nbr;var_idx++)); do
-	    printf "dbg: var_rqs[${var_idx}] = ${var_rqs[${var_idx}]}\n"
-	done # !var_idx
-    fi # !var_nbr
 fi # !dbg
 
 # Human-readable summary
