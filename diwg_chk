@@ -496,6 +496,36 @@ for ((fl_idx=0;fl_idx<fl_nbr;fl_idx++)); do
 	date_dff=$((date_crr-date_chr))
 	echo "Elapsed time for coordinate bounds check = $((date_dff/60))m$((date_dff % 60))s"
     fi # !dbg
+
+    printf "\nTest 6: Check that time variables are double precision ...\n"
+    printf "Recommendation: Use Double Precision When Archiving Time in Seconds Since a Specific Epoch\n"
+    echo "URL: https://wiki.earthdata.nasa.gov/display/ESDSWG/Use+Double+Precision+When+Archiving+Time+in+Seconds+Since+a+Specific+Epoch"
+    [[ ${dbg_lvl} -ge 0 ]] && date_chr=$(date +"%s")
+
+    cmd_tm[${fl_idx}]="ncks --dbg_lvl=${dbg_lvl} --chk_tm ${fl_in[${fl_idx}]}"
+
+    if [ ${dbg_lvl} -ge 1 ]; then
+	echo ${cmd_tm[${fl_idx}]}
+    fi # !dbg
+    if [ ${dbg_lvl} -le 1 ]; then
+	if [ -z "${par_opt}" ]; then
+	    eval ${cmd_tm[${fl_idx}]}
+	    if [ "$?" -ne 0 ]; then
+		printf "Result: FAILURE precision of time variables check failed. Reproduce this single check with:\n${cmd_tm[${fl_idx}]}\n"
+	    else # !err
+		printf "Result: SUCCESS precision of time variables check passed.\n"
+	    fi # !err
+	else # !par_opt
+	    eval ${cmd_tm[${fl_idx}]} ${par_opt} # eval always returns 0 on backgrounded processes
+	    bnd_pid[${fl_idx}]=$!
+	fi # !par_opt
+    fi # !dbg
+
+    if [ ${dbg_lvl} -ge 1 ]; then
+	date_crr=$(date +"%s")
+	date_dff=$((date_crr-date_chr))
+	echo "Elapsed time for precision of time variables check = $((date_dff/60))m$((date_dff % 60))s"
+    fi # !dbg
     
 done # !fl_idx
 
